@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ pet.name }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('general.home') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('pets.pet_list') }}">Browse Pets</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ pet.name }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row g-5">
+            <!-- Left: Large Pet Photo -->
+            <div class="col-lg-6">
+                <div class="detail-img-container">
+                    {% if pet.photo %}
+                        <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" class="detail-img">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" class="detail-img">
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right: Pet Details and Actions -->
+            <div class="col-lg-6">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <span class="badge bg-soft-primary text-primary px-3 py-2 rounded-pill mb-2" style="background-color: var(--primary-light); font-weight: 600;">
+                            {{ pet.species }}
+                        </span>
+                        <h1 class="display-5 fw-bold mb-0">{{ pet.name }}</h1>
+                    </div>
+                    <div>
+                        {% if pet.is_adopted %}
+                            <span class="badge bg-success px-4 py-2.5 rounded-pill fs-6"><i class="fa-solid fa-house-chimney-user me-2"></i> Adopted!</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark px-4 py-2.5 rounded-pill fs-6"><i class="fa-solid fa-heart-pulse me-2"></i> Available</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <p class="lead text-muted mb-4">
+                    <i class="fa-solid fa-location-dot text-primary me-2"></i> Located in <strong>{{ pet.location }}</strong>
+                </p>
+
+                <!-- Features Badges Grid -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 border rounded text-center bg-white">
+                            <span class="text-muted d-block text-sm mb-1">Breed</span>
+                            <strong class="text-dark">{% if pet.breed %}{{ pet.breed }}{% else %}Mixed{% endif %}</strong>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 border rounded text-center bg-white">
+                            <span class="text-muted d-block text-sm mb-1">Age</span>
+                            <strong class="text-dark">{{ pet.age }} {% if pet.age == 1 %}year{% else %}years{% endif %}</strong>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 border rounded text-center bg-white">
+                            <span class="text-muted d-block text-sm mb-1">Gender</span>
+                            <strong class="text-dark">{{ pet.gender }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 border rounded text-center bg-white">
+                            <span class="text-muted d-block text-sm mb-1">Size</span>
+                            <strong class="text-dark">{{ pet.size }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <h3 class="h5 fw-bold mb-3">About {{ pet.name }}</h3>
+                    <p class="text-muted" style="white-space: pre-line;">
+                        {% if pet.description %}{{ pet.description }}{% else %}No description provided.{% endif %}
+                    </p>
+                </div>
+
+                <!-- Attributes & Health -->
+                <div class="mb-4 bg-white p-4 border rounded-4">
+                    <h3 class="h6 fw-bold mb-3">Health & Details</h3>
+                    <div class="row g-2">
+                        <div class="col-md-6 d-flex align-items-center gap-2 mb-2">
+                            <i class="fa-solid {% if pet.vaccinated %}fa-circle-check text-success{% else %}fa-circle-xmark text-danger{% endif %} fs-5"></i>
+                            <span class="text-muted">Fully Vaccinated: <strong>{% if pet.vaccinated %}Yes{% else %}No{% endif %}</strong></span>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-center gap-2 mb-2">
+                            <i class="fa-solid fa-circle-info text-primary fs-5"></i>
+                            <span class="text-muted">Color: <strong>{% if pet.color %}{{ pet.color }}{% else %}N/A{% endif %}</strong></span>
+                        </div>
+                        <div class="col-12 d-flex align-items-center gap-2 mt-2 pt-2 border-top">
+                            <i class="fa-solid fa-hotel text-primary fs-5"></i>
+                            <span class="text-muted">Listed By: <strong>{{ pet.shelter.name }}</strong> ({{ pet.shelter.email }})</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button logic -->
+                <div class="d-flex gap-3">
+                    {% if pet.is_adopted %}
+                        <button class="btn btn-secondary w-100 py-3 rounded-pill" disabled>
+                            <i class="fa-solid fa-lock me-2"></i> This pet has already been adopted
+                        </button>
+                    {% else %}
+                        {% if current_user.is_authenticated and (current_user.role == 'admin' or pet.shelter_id == current_user.id) %}
+                            <!-- Owner / Admin Controls -->
+                            <a href="{{ url_for('pets.edit_pet', pet_id=pet.id) }}" class="btn btn-outline-custom flex-grow-1 py-3">
+                                <i class="fa-solid fa-pen-to-square me-2"></i> Edit Details
+                            </a>
+                            <form action="{{ url_for('pets.delete_pet', pet_id=pet.id) }}" method="POST" class="confirm-delete-form" data-pet-name="{{ pet.name }}">
+                                <button type="submit" class="btn btn-danger py-3 px-4 rounded-pill">
+                                    <i class="fa-solid fa-trash-can"></i> Delete
+                                </button>
+                            </form>
+                        {% else %}
+                            <!-- Public / Adopter CTA -->
+                            <a href="{{ url_for('adoptions.apply', pet_id=pet.id) }}" class="btn btn-primary-custom w-100 py-3">
+                                <i class="fa-solid fa-heart me-2"></i> Adopt {{ pet.name }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

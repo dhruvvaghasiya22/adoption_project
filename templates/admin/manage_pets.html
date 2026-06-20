@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage All Pets{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('general.home') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Manage Pets</li>
+                    </ol>
+                </nav>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="fw-bold mb-0">Manage All Pets</h1>
+                    <a href="{{ url_for('pets.add_pet') }}" class="btn btn-primary-custom btn-sm"><i class="fa-solid fa-plus me-1"></i> Add Pet</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                {% if pets %}
+                    <div class="table-responsive rounded-4 border bg-white shadow-sm">
+                        <table class="table table-hover table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Pet Name</th>
+                                    <th>Species & Breed</th>
+                                    <th>Location</th>
+                                    <th>Age & Size</th>
+                                    <th>Shelter User</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pet in pets %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 8px; border: 1px solid var(--border-color);">
+                                                    {% if pet.photo %}
+                                                        <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    {% else %}
+                                                        <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    {% endif %}
+                                                </div>
+                                                <h5 class="h6 mb-0 fw-bold">{{ pet.name }}</h5>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <strong>{{ pet.species }}</strong>
+                                            <span class="text-sm text-muted d-block">{% if pet.breed %}{{ pet.breed }}{% else %}Mixed{% endif %}</span>
+                                        </td>
+                                        <td>{{ pet.location }}</td>
+                                        <td>
+                                            {{ pet.age }} yrs / {{ pet.size }}
+                                        </td>
+                                        <td>
+                                            <strong>{{ pet.shelter.name }}</strong>
+                                            <span class="text-sm text-muted d-block" style="font-size: 0.8rem;">{{ pet.shelter.email }}</span>
+                                        </td>
+                                        <td>
+                                            {% if pet.is_adopted %}
+                                                <span class="badge-status badge-approved">Adopted</span>
+                                            {% else %}
+                                                <span class="badge-status badge-pending">Available</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <a href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-eye"></i></a>
+                                                <a href="{{ url_for('pets.edit_pet', pet_id=pet.id) }}" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-pen"></i></a>
+                                                <form action="{{ url_for('pets.delete_pet', pet_id=pet.id) }}" method="POST" class="confirm-delete-form d-inline-block" data-pet-name="{{ pet.name }}">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5 bg-white border rounded-4">
+                        <i class="fa-solid fa-dog fa-3x text-muted mb-3"></i>
+                        <h4>No pets found in database.</h4>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

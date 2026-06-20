@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply to Adopt {{ pet.name }}{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="{{ url_for('general.home') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('pets.pet_list') }}">Browse Pets</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}">{{ pet.name }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Adoption Application</li>
+                    </ol>
+                </nav>
+                
+                <!-- Quick Pet Summary Card -->
+                <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px; overflow: hidden; border: 1px solid var(--border-color) !important;">
+                    <div class="d-flex align-items-center p-3 gap-3">
+                        <div style="width: 80px; height: 80px; overflow: hidden; border-radius: 12px; flex-shrink: 0;">
+                            {% if pet.photo %}
+                                <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                        <div>
+                            <span class="text-sm text-primary fw-bold">{{ pet.species }}</span>
+                            <h2 class="h5 fw-bold mb-1">Applying to Adopt: {{ pet.name }}</h2>
+                            <p class="text-muted text-sm mb-0">
+                                {% if pet.breed %}{{ pet.breed }}{% else %}Mixed Breed{% endif %} &bull; {{ pet.location }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="text-center mb-4">
+                        <i class="fa-solid fa-file-signature text-primary fs-1 mb-2"></i>
+                        <h1 class="h3 fw-bold">Adoption Screening Application</h1>
+                        <p class="text-muted">Shelters check this details to make sure the pet fits your household.</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('adoptions.apply', pet_id=pet.id) }}" novalidate>
+                        {{ form.csrf_token }}
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.full_name.label(class="form-label") }}
+                                {{ form.full_name(class="form-control" + (" is-invalid" if form.full_name.errors else ""), placeholder="Jane Doe") }}
+                                {% for error in form.full_name.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-6">
+                                {{ form.phone.label(class="form-label") }}
+                                {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else ""), placeholder="555-123-4567") }}
+                                {% for error in form.phone.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-8">
+                                {{ form.address.label(class="form-label") }}
+                                {{ form.address(class="form-control" + (" is-invalid" if form.address.errors else ""), placeholder="123 Maple Street, Apt 4B") }}
+                                {% for error in form.address.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-4">
+                                {{ form.home_type.label(class="form-label") }}
+                                {{ form.home_type(class="form-select" + (" is-invalid" if form.home_type.errors else "")) }}
+                                {% for error in form.home_type.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-12">
+                                {{ form.reason.label(class="form-label") }}
+                                {{ form.reason(class="form-control" + (" is-invalid" if form.reason.errors else ""), rows="4", placeholder="Explain why you'd like to adopt, your home environment, who lives in the home...") }}
+                                {% for error in form.reason.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-12">
+                                {{ form.previous_pet_experience.label(class="form-label") }}
+                                {{ form.previous_pet_experience(class="form-control" + (" is-invalid" if form.previous_pet_experience.errors else ""), rows="3", placeholder="e.g., I owned a cat for 12 years; I grew up with labradors...") }}
+                                {% for error in form.previous_pet_experience.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-12 mt-4 d-flex gap-3">
+                                <a href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}" class="btn btn-outline-custom flex-grow-1 py-2.5">Cancel</a>
+                                {{ form.submit(class="btn btn-primary-custom flex-grow-1 py-2.5") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage All Applications{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('general.home') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Manage Applications</li>
+                    </ol>
+                </nav>
+                <h1 class="fw-bold mb-0">Manage All Applications</h1>
+                <p class="text-muted">Review, approve, and reject all user adoption applications</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                {% if applications %}
+                    <div class="row g-4">
+                        {% for app in applications %}
+                            <div class="col-lg-6">
+                                <div class="card p-4 border rounded-4 shadow-sm bg-white">
+                                    <div class="d-flex justify-content-between align-items-start mb-3 border-bottom pb-2">
+                                        <div>
+                                            <span class="text-sm text-muted">Application #{{ app.id }} &bull; Applied: {{ app.applied_at.strftime('%B %d, %Y') }}</span>
+                                            <h5 class="h6 mb-0 fw-bold mt-1">Applicant: {{ app.full_name }}</h5>
+                                            <span class="text-sm text-primary">Registered Email: <strong>{{ app.applicant.email }}</strong></span>
+                                        </div>
+                                        <div>
+                                            {% if app.status == 'pending' %}
+                                                <span class="badge-status badge-pending"><i class="fa-regular fa-clock me-1"></i> Pending</span>
+                                            {% elif app.status == 'approved' %}
+                                                <span class="badge-status badge-approved"><i class="fa-solid fa-circle-check me-1"></i> Approved</span>
+                                            {% else %}
+                                                <span class="badge-status badge-rejected"><i class="fa-solid fa-circle-xmark me-1"></i> Rejected</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Pet Quick Look -->
+                                    <div class="d-flex align-items-center gap-3 mb-3 p-2 bg-light rounded-3">
+                                        <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 6px; border: 1px solid var(--border-color); flex-shrink: 0;">
+                                            {% if app.pet.photo %}
+                                                <img src="{{ url_for('static', filename='uploads/pet_photos/' + app.pet.photo) }}" alt="{{ app.pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                            {% else %}
+                                                <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ app.pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">Pet: {{ app.pet.name }}</h6>
+                                            <span class="text-xs text-muted">{{ app.pet.species }} &bull; Listed by: {{ app.pet.shelter.name }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-sm text-muted mb-4" style="font-size: 0.92rem;">
+                                        <p class="mb-1"><strong>Phone:</strong> {{ app.phone }}</p>
+                                        <p class="mb-1"><strong>Address:</strong> {{ app.address }} ({{ app.home_type }})</p>
+                                        <p class="mb-1"><strong>Reason for Adoption:</strong> "{{ app.reason }}"</p>
+                                        {% if app.previous_pet_experience %}
+                                            <p class="mb-0"><strong>Experience:</strong> "{{ app.previous_pet_experience }}"</p>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if app.status == 'pending' and not app.pet.is_adopted %}
+                                        <div class="d-flex gap-2">
+                                            <form action="{{ url_for('admin.approve_application', application_id=app.id) }}" method="POST" class="flex-grow-1">
+                                                <button type="submit" class="btn btn-success btn-sm w-100 py-2"><i class="fa-solid fa-check me-1"></i> Approve Application</button>
+                                            </form>
+                                            <form action="{{ url_for('admin.reject_application', application_id=app.id) }}" method="POST" class="flex-grow-1">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm w-100 py-2"><i class="fa-solid fa-xmark me-1"></i> Reject</button>
+                                            </form>
+                                        </div>
+                                    {% elif app.status == 'pending' and app.pet.is_adopted %}
+                                        <p class="text-danger text-sm mb-0">Pet is already adopted; please reject this application.</p>
+                                        <form action="{{ url_for('admin.reject_application', application_id=app.id) }}" method="POST" class="mt-2">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm w-100"><i class="fa-solid fa-xmark me-1"></i> Close / Reject</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5 bg-white border rounded-4">
+                        <i class="fa-solid fa-file-invoice fa-3x text-muted mb-3"></i>
+                        <h4>No applications found.</h4>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

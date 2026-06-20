@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Find Your New Best Friend{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 hero-content">
+                <span class="badge bg-soft-primary text-primary mb-3 px-3 py-2 rounded-pill" style="background-color: var(--primary-light); font-weight: 600;">Adopt, Don't Shop</span>
+                <h1 class="hero-title text-gradient">Find Your New<br>Best Friend</h1>
+                <p class="hero-subtitle mb-4">Give a loving companion a second chance. Browse through hundreds of dogs, cats, rabbits, and more waiting for their forever home.</p>
+                
+                <!-- Search Form -->
+                <form action="{{ url_for('pets.pet_list') }}" method="GET" class="d-flex flex-column flex-sm-row gap-2 mb-4">
+                    <input type="text" name="search" class="form-control rounded-pill px-4" placeholder="Search by name, breed, or species..." aria-label="Search pets">
+                    <button type="submit" class="btn btn-primary-custom px-4">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i> Search
+                    </button>
+                </form>
+                
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('pets.pet_list') }}" class="btn btn-primary-custom">View All Pets</a>
+                    <a href="{{ url_for('general.about') }}" class="btn btn-outline-custom">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center">
+                <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=600&h=500" alt="Happy dog looking at owner" class="img-fluid rounded-4 shadow-lg" style="object-fit: cover;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Pets Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row mb-5 text-center">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="h1 mb-3">Featured Companions</h2>
+                <p class="text-muted">Meet these wonderful pets who just arrived and are eagerly looking for a family to join.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% if featured_pets %}
+                {% for pet in featured_pets %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="pet-card">
+                            <div class="pet-card-img-container">
+                                {% if pet.photo %}
+                                    <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" class="pet-card-img">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" class="pet-card-img">
+                                {% endif %}
+                                <span class="pet-badge-gender">
+                                    {% if pet.gender == 'Male' %}
+                                        <i class="fa-solid fa-mars gender-male"></i> Male
+                                    {% else %}
+                                        <i class="fa-solid fa-venus gender-female"></i> Female
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="pet-card-body">
+                                <div>
+                                    <div class="pet-card-title">
+                                        <h3 class="h5 mb-0">{{ pet.name }}</h3>
+                                        <span class="badge bg-light text-dark border">{{ pet.species }}</span>
+                                    </div>
+                                    <p class="pet-card-details mb-2">
+                                        {% if pet.breed %}{{ pet.breed }}{% else %}Mixed Breed{% endif %} &bull; 
+                                        {{ pet.age }} {% if pet.age == 1 %}year{% else %}years{% endif %} old
+                                    </p>
+                                    <p class="text-muted text-sm mb-3">
+                                        <i class="fa-solid fa-location-dot text-primary me-1"></i> {{ pet.location }}
+                                    </p>
+                                </div>
+                                <div class="pet-card-footer">
+                                    <span class="badge bg-soft-success text-success" style="background-color: var(--primary-light); color: var(--primary);">
+                                        {% if pet.vaccinated %}<i class="fa-solid fa-shield-dog"></i> Vaccinated{% else %}Not Vaccinated{% endif %}
+                                    </span>
+                                    <a href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}" class="btn btn-primary-custom btn-sm">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <div class="text-muted mb-3"><i class="fa-solid fa-dog fa-3x"></i></div>
+                    <h4>No pets available for adoption right now.</h4>
+                    <p>Check back later or register as a shelter to list pets.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{{ url_for('pets.pet_list') }}" class="btn btn-outline-custom btn-lg">Browse All Available Pets</a>
+        </div>
+    </div>
+</section>
+
+<!-- How Adoption Works Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5 text-center">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="h1 mb-3">How Adoption Works</h2>
+                <p class="text-muted">Three simple steps to bring your new best friend home.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="process-card">
+                    <div class="process-step">1</div>
+                    <h3 class="h5 mb-3">Find Your Match</h3>
+                    <p class="text-muted mb-0">Browse our gallery of lovely pets. Use filters to find the perfect fit for your home and lifestyle.</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="process-card">
+                    <div class="process-step">2</div>
+                    <h3 class="h5 mb-3">Apply to Adopt</h3>
+                    <p class="text-muted mb-0">Fill out a simple application describing your living arrangements and previous experience with pets.</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="process-card">
+                    <div class="process-step">3</div>
+                    <h3 class="h5 mb-3">Meet and Welcome Home</h3>
+                    <p class="text-muted mb-0">Once approved by the shelter, arrange a meetup and welcome your new companion to their forever home!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

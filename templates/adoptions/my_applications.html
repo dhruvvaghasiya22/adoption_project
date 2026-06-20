@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}My Applications{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('general.home') }}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">My Applications</li>
+                    </ol>
+                </nav>
+                <h1 class="fw-bold mb-1">My Adoption Applications</h1>
+                <p class="text-muted">Track the status of your applications below</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                {% if applications %}
+                    <div class="table-responsive shadow-sm rounded-4 border bg-white">
+                        <table class="table table-hover table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Pet</th>
+                                    <th>Location</th>
+                                    <th>Applied On</th>
+                                    <th>Home Type</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in applications %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 8px; border: 1px solid var(--border-color);">
+                                                    {% if app.pet.photo %}
+                                                        <img src="{{ url_for('static', filename='uploads/pet_photos/' + app.pet.photo) }}" alt="{{ app.pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    {% else %}
+                                                        <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ app.pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <h5 class="h6 mb-0 fw-bold">{{ app.pet.name }}</h5>
+                                                    <span class="text-sm text-muted">{{ app.pet.species }} &bull; {% if app.pet.breed %}{{ app.pet.breed }}{% else %}Mixed{% endif %}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ app.pet.location }}</td>
+                                        <td>{{ app.applied_at.strftime('%B %d, %Y') }}</td>
+                                        <td>{{ app.home_type }}</td>
+                                        <td>
+                                            {% if app.status == 'pending' %}
+                                                <span class="badge-status badge-pending"><i class="fa-regular fa-clock me-1"></i> Pending</span>
+                                            {% elif app.status == 'approved' %}
+                                                <span class="badge-status badge-approved"><i class="fa-solid fa-circle-check me-1"></i> Approved</span>
+                                            {% elif app.status == 'rejected' %}
+                                                <span class="badge-status badge-rejected"><i class="fa-solid fa-circle-xmark me-1"></i> Rejected</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="{{ url_for('pets.pet_detail', pet_id=app.pet.id) }}" class="btn btn-outline-custom btn-sm py-1 px-3">View Pet Details</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5 bg-white rounded-4 border shadow-sm">
+                        <div class="text-muted mb-3"><i class="fa-solid fa-file-invoice fa-3x"></i></div>
+                        <h4>You haven't applied for any pets yet.</h4>
+                        <p class="text-muted">Find your companion in our listings and submit an application.</p>
+                        <a href="{{ url_for('pets.pet_list') }}" class="btn btn-primary-custom mt-3">Browse Pets</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

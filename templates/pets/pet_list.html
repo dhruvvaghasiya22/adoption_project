@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Available Pets{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('general.home') }}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Browse Pets</li>
+                    </ol>
+                </nav>
+                <h1 class="fw-bold mb-1">Meet Our Pets</h1>
+                <p class="text-muted">Use filters on the left to find your perfect companion</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Sidebar Filters -->
+            <div class="col-lg-3">
+                <div class="card border-0 shadow-sm p-4 sticky-lg-top" style="top: 100px; background-color: var(--card-bg); border: 1px solid var(--border-color) !important; border-radius: 18px; z-index: 10;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h5 fw-bold mb-0"><i class="fa-solid fa-sliders text-primary me-2"></i> Filters</h2>
+                        <a href="{{ url_for('pets.pet_list') }}" class="text-decoration-none text-muted text-sm fw-semibold">Reset All</a>
+                    </div>
+                    
+                    <form method="GET" action="{{ url_for('pets.pet_list') }}">
+                        <!-- Search term -->
+                        <div class="mb-3">
+                            <label for="search" class="form-label text-sm fw-bold">Search</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                                <input type="text" id="search" name="search" class="form-control border-start-0" placeholder="Name or breed..." value="{{ search }}">
+                            </div>
+                        </div>
+
+                        <!-- Species -->
+                        <div class="mb-3">
+                            <label for="species" class="form-label text-sm fw-bold">Species</label>
+                            <select id="species" name="species" class="form-select">
+                                <option value="">All Species</option>
+                                <option value="Dog" {% if species_filter == 'Dog' %}selected{% endif %}>Dog</option>
+                                <option value="Cat" {% if species_filter == 'Cat' %}selected{% endif %}>Cat</option>
+                                <option value="Rabbit" {% if species_filter == 'Rabbit' %}selected{% endif %}>Rabbit</option>
+                                <option value="Bird" {% if species_filter == 'Bird' %}selected{% endif %}>Bird</option>
+                                <option value="Other" {% if species_filter == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Breed -->
+                        <div class="mb-3">
+                            <label for="breed" class="form-label text-sm fw-bold">Breed</label>
+                            <select id="breed" name="breed" class="form-select">
+                                <option value="">All Breeds</option>
+                                {% for breed_val in all_breeds %}
+                                    <option value="{{ breed_val }}" {% if breed_filter == breed_val %}selected{% endif %}>{{ breed_val }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Age Group -->
+                        <div class="mb-3">
+                            <label for="age_group" class="form-label text-sm fw-bold">Age Group</label>
+                            <select id="age_group" name="age_group" class="form-select">
+                                <option value="">All Ages</option>
+                                <option value="baby" {% if age_group_filter == 'baby' %}selected{% endif %}>Baby / Puppy / Kitten (< 1 yr)</option>
+                                <option value="young" {% if age_group_filter == 'young' %}selected{% endif %}>Young (1-3 yrs)</option>
+                                <option value="adult" {% if age_group_filter == 'adult' %}selected{% endif %}>Adult (3-8 yrs)</option>
+                                <option value="senior" {% if age_group_filter == 'senior' %}selected{% endif %}>Senior (8+ yrs)</option>
+                            </select>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="mb-3">
+                            <label for="gender" class="form-label text-sm fw-bold">Gender</label>
+                            <select id="gender" name="gender" class="form-select">
+                                <option value="">All Genders</option>
+                                <option value="Male" {% if gender_filter == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if gender_filter == 'Female' %}selected{% endif %}>Female</option>
+                            </select>
+                        </div>
+
+                        <!-- Size -->
+                        <div class="mb-3">
+                            <label for="size" class="form-label text-sm fw-bold">Size</label>
+                            <select id="size" name="size" class="form-select">
+                                <option value="">All Sizes</option>
+                                <option value="Small" {% if size_filter == 'Small' %}selected{% endif %}>Small</option>
+                                <option value="Medium" {% if size_filter == 'Medium' %}selected{% endif %}>Medium</option>
+                                <option value="Large" {% if size_filter == 'Large' %}selected{% endif %}>Large</option>
+                            </select>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="mb-3">
+                            <label for="location" class="form-label text-sm fw-bold">Location</label>
+                            <select id="location" name="location" class="form-select">
+                                <option value="">All Locations</option>
+                                {% for loc in all_locations %}
+                                    <option value="{{ loc }}" {% if location_filter == loc %}selected{% endif %}>{{ loc }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Vaccinated -->
+                        <div class="mb-4">
+                            <label for="vaccinated" class="form-label text-sm fw-bold">Vaccination Status</label>
+                            <select id="vaccinated" name="vaccinated" class="form-select">
+                                <option value="">All</option>
+                                <option value="yes" {% if vaccinated_filter == 'yes' %}selected{% endif %}>Fully Vaccinated</option>
+                                <option value="no" {% if vaccinated_filter == 'no' %}selected{% endif %}>Not Vaccinated</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-custom w-100"><i class="fa-solid fa-filter me-2"></i> Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Pet List Grid -->
+            <div class="col-lg-9">
+                <div class="row g-4">
+                    {% if pets %}
+                        {% for pet in pets %}
+                            <div class="col-md-6 col-xl-4">
+                                <div class="pet-card">
+                                    <div class="pet-card-img-container">
+                                        {% if pet.photo %}
+                                            <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" class="pet-card-img">
+                                        {% else %}
+                                            <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" class="pet-card-img">
+                                        {% endif %}
+                                        <span class="pet-badge-gender">
+                                            {% if pet.gender == 'Male' %}
+                                                <i class="fa-solid fa-mars gender-male"></i> Male
+                                            {% else %}
+                                                <i class="fa-solid fa-venus gender-female"></i> Female
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="pet-card-body">
+                                        <div>
+                                            <div class="pet-card-title">
+                                                <h3 class="h5 mb-0 fw-bold">{{ pet.name }}</h3>
+                                                <span class="badge bg-light text-dark border">{{ pet.species }}</span>
+                                            </div>
+                                            <p class="pet-card-details mb-2">
+                                                {% if pet.breed %}{{ pet.breed }}{% else %}Mixed Breed{% endif %} &bull; 
+                                                {{ pet.age }} {% if pet.age == 1 %}year{% else %}years{% endif %} old
+                                            </p>
+                                            <p class="text-muted text-sm mb-3">
+                                                <i class="fa-solid fa-location-dot text-primary me-1"></i> {{ pet.location }}
+                                            </p>
+                                        </div>
+                                        <div class="pet-card-footer">
+                                            <span class="badge bg-soft-success text-success" style="background-color: var(--primary-light); color: var(--primary);">
+                                                {% if pet.vaccinated %}<i class="fa-solid fa-shield-dog"></i> Vaccinated{% else %}Not Vaccinated{% endif %}
+                                            </span>
+                                            <a href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}" class="btn btn-primary-custom btn-sm">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12 text-center py-5">
+                            <div class="text-muted mb-3"><i class="fa-solid fa-paw fa-3x"></i></div>
+                            <h4>No pets match your criteria.</h4>
+                            <p class="text-muted">Try resetting the filters or broadening your search parameters.</p>
+                            <a href="{{ url_for('pets.pet_list') }}" class="btn btn-primary-custom mt-3">Reset All Filters</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

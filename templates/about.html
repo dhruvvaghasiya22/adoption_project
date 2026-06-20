@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="badge bg-soft-primary text-primary mb-3 px-3 py-2 rounded-pill" style="background-color: var(--primary-light); font-weight: 600;">Our Mission</span>
+                <h1 class="display-4 fw-bold mb-4 text-gradient">Connecting Hearts and Paws</h1>
+                <p class="lead text-muted mb-4">We believe that every animal deserves a loving, stable, and safe forever home. Our platform bridges the gap between rescue shelters and hopeful pet adopters.</p>
+                <p class="text-muted mb-4">Founded in 2026, PetAdopt simplifies the adoption lifecycle. By providing shelters with a portal to list animals and handle adoptions, and giving users a direct application workflow, we increase successful matches and help empty animal shelters.</p>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-success fs-4"></i>
+                            <span class="fw-semibold">Verified Shelters</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-success fs-4"></i>
+                            <span class="fw-semibold">100% Free Adoption Listing</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-success fs-4"></i>
+                            <span class="fw-semibold">Secure Applications</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-success fs-4"></i>
+                            <span class="fw-semibold">Post-Adoption Guides</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=600&h=500" alt="Dog with sticky-out tongue" class="img-fluid rounded-4 shadow-lg" style="object-fit: cover; width: 100%;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="row mb-5 text-center">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="h1">Our Core Values</h2>
+                <p class="text-muted">The principles guiding our work every day.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 text-center p-4" style="background-color: var(--light-bg); border-radius: 18px;">
+                    <div class="mb-3 text-primary"><i class="fa-solid fa-heart fa-3x"></i></div>
+                    <h3 class="h5 fw-bold mb-3">Compassion First</h3>
+                    <p class="text-muted mb-0">Every feature we construct is centered around animal welfare and ensuring the security and happiness of every companion.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 text-center p-4" style="background-color: var(--light-bg); border-radius: 18px;">
+                    <div class="mb-3 text-primary"><i class="fa-solid fa-people-group fa-3x"></i></div>
+                    <h3 class="h5 fw-bold mb-3">Community Collaboration</h3>
+                    <p class="text-muted mb-0">We work closely with local shelters, veterinary offices, and animal advocates to build a cooperative pet safety network.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 text-center p-4" style="background-color: var(--light-bg); border-radius: 18px;">
+                    <div class="mb-3 text-primary"><i class="fa-solid fa-compass fa-3x"></i></div>
+                    <h3 class="h5 fw-bold mb-3">Responsible Placement</h3>
+                    <p class="text-muted mb-0">We provide screening forms to make sure every pet is placed in a environment suited to their physiological and behavioral needs.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
