@@ -3,98 +3,115 @@
 {% block title %}Manage All Applications{% endblock %}
 
 {% block content %}
-<section class="py-5">
-    <div class="container">
-        <!-- Breadcrumb -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ url_for('general.home') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Manage Applications</li>
-                    </ol>
-                </nav>
-                <h1 class="fw-bold mb-0">Manage All Applications</h1>
-                <p class="text-muted">Review, approve, and reject all user adoption applications</p>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-12">
-                {% if applications %}
-                    <div class="row g-4">
-                        {% for app in applications %}
-                            <div class="col-lg-6">
-                                <div class="card p-4 border rounded-4 shadow-sm bg-white">
-                                    <div class="d-flex justify-content-between align-items-start mb-3 border-bottom pb-2">
-                                        <div>
-                                            <span class="text-sm text-muted">Application #{{ app.id }} &bull; Applied: {{ app.applied_at.strftime('%B %d, %Y') }}</span>
-                                            <h5 class="h6 mb-0 fw-bold mt-1">Applicant: {{ app.full_name }}</h5>
-                                            <span class="text-sm text-primary">Registered Email: <strong>{{ app.applicant.email }}</strong></span>
-                                        </div>
-                                        <div>
-                                            {% if app.status == 'pending' %}
-                                                <span class="badge-status badge-pending"><i class="fa-regular fa-clock me-1"></i> Pending</span>
-                                            {% elif app.status == 'approved' %}
-                                                <span class="badge-status badge-approved"><i class="fa-solid fa-circle-check me-1"></i> Approved</span>
-                                            {% else %}
-                                                <span class="badge-status badge-rejected"><i class="fa-solid fa-circle-xmark me-1"></i> Rejected</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Pet Quick Look -->
-                                    <div class="d-flex align-items-center gap-3 mb-3 p-2 bg-light rounded-3">
-                                        <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 6px; border: 1px solid var(--border-color); flex-shrink: 0;">
-                                            {% if app.pet.photo %}
-                                                <img src="{{ url_for('static', filename='uploads/pet_photos/' + app.pet.photo) }}" alt="{{ app.pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                            {% else %}
-                                                <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ app.pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                            {% endif %}
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0 fw-bold">Pet: {{ app.pet.name }}</h6>
-                                            <span class="text-xs text-muted">{{ app.pet.species }} &bull; Listed by: {{ app.pet.shelter.name }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-sm text-muted mb-4" style="font-size: 0.92rem;">
-                                        <p class="mb-1"><strong>Phone:</strong> {{ app.phone }}</p>
-                                        <p class="mb-1"><strong>Address:</strong> {{ app.address }} ({{ app.home_type }})</p>
-                                        <p class="mb-1"><strong>Reason for Adoption:</strong> "{{ app.reason }}"</p>
-                                        {% if app.previous_pet_experience %}
-                                            <p class="mb-0"><strong>Experience:</strong> "{{ app.previous_pet_experience }}"</p>
-                                        {% endif %}
-                                    </div>
-
-                                    {% if app.status == 'pending' and not app.pet.is_adopted %}
-                                        <div class="d-flex gap-2">
-                                            <form action="{{ url_for('admin.approve_application', application_id=app.id) }}" method="POST" class="flex-grow-1">
-                                                <button type="submit" class="btn btn-success btn-sm w-100 py-2"><i class="fa-solid fa-check me-1"></i> Approve Application</button>
-                                            </form>
-                                            <form action="{{ url_for('admin.reject_application', application_id=app.id) }}" method="POST" class="flex-grow-1">
-                                                <button type="submit" class="btn btn-outline-danger btn-sm w-100 py-2"><i class="fa-solid fa-xmark me-1"></i> Reject</button>
-                                            </form>
-                                        </div>
-                                    {% elif app.status == 'pending' and app.pet.is_adopted %}
-                                        <p class="text-danger text-sm mb-0">Pet is already adopted; please reject this application.</p>
-                                        <form action="{{ url_for('admin.reject_application', application_id=app.id) }}" method="POST" class="mt-2">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm w-100"><i class="fa-solid fa-xmark me-1"></i> Close / Reject</button>
-                                        </form>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="text-center py-5 bg-white border rounded-4">
-                        <i class="fa-solid fa-file-invoice fa-3x text-muted mb-3"></i>
-                        <h4>No applications found.</h4>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
+<div class="container mx-auto max-w-7xl px-6 md:px-12 py-12 text-left">
+    <!-- Breadcrumbs & Header -->
+    <div class="mb-10 animate-fade-in-up">
+        <nav class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+            <a href="{{ url_for('general.home') }}" class="hover:text-primary transition-colors">Home</a>
+            <span>/</span>
+            <a href="{{ url_for('admin.dashboard') }}" class="hover:text-primary transition-colors">Dashboard</a>
+            <span>/</span>
+            <span class="text-slate-500">Manage Applications</span>
+        </nav>
+        <h1 class="text-3xl font-black text-dark mb-2">Manage All Applications</h1>
+        <p class="text-slate-500 text-sm md:text-base">Review, moderate, approve, or reject user-submitted screening applications.</p>
     </div>
-</section>
+
+    <!-- Application List Grid -->
+    <div class="animate-fade-in-up" style="animation-delay: 100ms;">
+        {% if applications %}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {% for app in applications %}
+                    <!-- Application Card -->
+                    <div class="bg-white border border-border/60 rounded-[32px] p-6 shadow-sm flex flex-col gap-4">
+                        <!-- Top Header Status -->
+                        <div class="flex justify-between items-start border-b border-slate-100 pb-3">
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                                    App #{{ app.id }} &bull; {{ app.applied_at.strftime('%b %d, %Y') }}
+                                </span>
+                                <h3 class="text-base font-black text-dark leading-tight">Applicant: {{ app.full_name }}</h3>
+                                <p class="text-xs text-primary font-semibold mt-0.5">Email: {{ app.applicant.email }}</p>
+                            </div>
+                            <div>
+                                {% if app.status == 'pending' %}
+                                    <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200/50 rounded-full">
+                                        <i class="fa-regular fa-clock"></i> Pending
+                                    </span>
+                                {% elif app.status == 'approved' %}
+                                    <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200/50 rounded-full">
+                                        <i class="fa-solid fa-circle-check"></i> Approved
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 bg-red-50 text-red-700 border border-red-200/50 rounded-full">
+                                        <i class="fa-solid fa-circle-xmark"></i> Rejected
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Pet Quick Card -->
+                        <div class="flex items-center gap-3 bg-slate-50/70 p-3 rounded-2xl border border-slate-100/50">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden border border-border bg-slate-100 flex-shrink-0">
+                                {% if app.pet.photo %}
+                                    <img src="{{ url_for('static', filename='uploads/pet_photos/' + app.pet.photo) }}" alt="{{ app.pet.name }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ app.pet.name }}" class="w-full h-full object-cover">
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-dark">Companion: {{ app.pet.name }}</h4>
+                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
+                                    {{ app.pet.species }} &bull; Listed by: {{ app.pet.shelter.name }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Application Fields -->
+                        <div class="bg-slate-50/40 p-4 rounded-2xl border border-slate-100/50 text-xs text-slate-500 font-semibold space-y-2">
+                            <p class="flex items-center gap-1.5"><span class="text-slate-400 font-bold uppercase text-[9px] tracking-wider w-16 flex-shrink-0">Phone:</span> <span class="text-dark">{{ app.phone }}</span></p>
+                            <p class="flex items-start gap-1.5"><span class="text-slate-400 font-bold uppercase text-[9px] tracking-wider w-16 flex-shrink-0 mt-0.5">Address:</span> <span class="text-dark">{{ app.address }} ({{ app.home_type }})</span></p>
+                            <p class="flex items-start gap-1.5"><span class="text-slate-400 font-bold uppercase text-[9px] tracking-wider w-16 flex-shrink-0 mt-0.5">Reason:</span> <span class="text-dark leading-relaxed italic">"{{ app.reason }}"</span></p>
+                            {% if app.previous_pet_experience %}
+                                <p class="flex items-start gap-1.5"><span class="text-slate-400 font-bold uppercase text-[9px] tracking-wider w-16 flex-shrink-0 mt-0.5">Exp:</span> <span class="text-dark leading-relaxed italic">"{{ app.previous_pet_experience }}"</span></p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Action buttons -->
+                        {% if app.status == 'pending' and not app.pet.is_adopted %}
+                            <div class="flex gap-2 pt-2 border-t border-slate-100">
+                                <form action="{{ url_for('admin.approve_application', application_id=app.id) }}" method="POST" class="flex-grow">
+                                    <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-sm">
+                                        <i class="fa-solid fa-check"></i> Approve Application
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('admin.reject_application', application_id=app.id) }}" method="POST" class="flex-grow">
+                                    <button type="submit" class="w-full py-2.5 border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-xl text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5">
+                                        <i class="fa-solid fa-xmark"></i> Reject
+                                    </button>
+                                </form>
+                            </div>
+                        {% elif app.status == 'pending' and app.pet.is_adopted %}
+                            <div class="pt-2 border-t border-slate-100">
+                                <p class="text-red-500 text-[10px] font-bold mb-2">This pet has already been adopted; please close this application.</p>
+                                <form action="{{ url_for('admin.reject_application', application_id=app.id) }}" method="POST">
+                                    <button type="submit" class="w-full py-2.5 border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-xl text-xs transition-colors cursor-pointer">
+                                        <i class="fa-solid fa-xmark"></i> Close &amp; Reject
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty state -->
+            <div class="py-16 px-6 bg-primary-light/10 border border-dashed border-border rounded-[32px] text-center max-w-xl mx-auto flex flex-col items-center justify-center">
+                <i class="fa-solid fa-file-invoice text-4xl text-slate-300 mb-3 block"></i>
+                <h3 class="text-lg font-black text-dark mb-1">No applications found</h3>
+                <p class="text-slate-400 text-sm max-w-xs">There are no screening requests submitted in the platform database currently.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

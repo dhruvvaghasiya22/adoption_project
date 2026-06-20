@@ -3,179 +3,417 @@
 {% block title %}Browse Available Pets{% endblock %}
 
 {% block content %}
-<section class="py-5">
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ url_for('general.home') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Browse Pets</li>
-                    </ol>
-                </nav>
-                <h1 class="fw-bold mb-1">Meet Our Pets</h1>
-                <p class="text-muted">Use filters on the left to find your perfect companion</p>
+<!-- Main Container -->
+<div class="container mx-auto max-w-7xl px-6 md:px-12 py-12">
+    <!-- Breadcrumb & Header -->
+    <div class="mb-10 text-left animate-fade-in-up">
+        <nav class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+            <a href="{{ url_for('general.home') }}" class="hover:text-primary transition-colors">Home</a>
+            <span>/</span>
+            <span class="text-slate-500">Browse Pets</span>
+        </nav>
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-black text-dark mb-2">Meet Our Companions</h1>
+                <p class="text-slate-500 text-sm md:text-base">Find your perfect match from our verified local shelter partners.</p>
             </div>
-        </div>
-
-        <div class="row g-4">
-            <!-- Sidebar Filters -->
-            <div class="col-lg-3">
-                <div class="card border-0 shadow-sm p-4 sticky-lg-top" style="top: 100px; background-color: var(--card-bg); border: 1px solid var(--border-color) !important; border-radius: 18px; z-index: 10;">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="h5 fw-bold mb-0"><i class="fa-solid fa-sliders text-primary me-2"></i> Filters</h2>
-                        <a href="{{ url_for('pets.pet_list') }}" class="text-decoration-none text-muted text-sm fw-semibold">Reset All</a>
-                    </div>
-                    
-                    <form method="GET" action="{{ url_for('pets.pet_list') }}">
-                        <!-- Search term -->
-                        <div class="mb-3">
-                            <label for="search" class="form-label text-sm fw-bold">Search</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                                <input type="text" id="search" name="search" class="form-control border-start-0" placeholder="Name or breed..." value="{{ search }}">
-                            </div>
-                        </div>
-
-                        <!-- Species -->
-                        <div class="mb-3">
-                            <label for="species" class="form-label text-sm fw-bold">Species</label>
-                            <select id="species" name="species" class="form-select">
-                                <option value="">All Species</option>
-                                <option value="Dog" {% if species_filter == 'Dog' %}selected{% endif %}>Dog</option>
-                                <option value="Cat" {% if species_filter == 'Cat' %}selected{% endif %}>Cat</option>
-                                <option value="Rabbit" {% if species_filter == 'Rabbit' %}selected{% endif %}>Rabbit</option>
-                                <option value="Bird" {% if species_filter == 'Bird' %}selected{% endif %}>Bird</option>
-                                <option value="Other" {% if species_filter == 'Other' %}selected{% endif %}>Other</option>
-                            </select>
-                        </div>
-
-                        <!-- Breed -->
-                        <div class="mb-3">
-                            <label for="breed" class="form-label text-sm fw-bold">Breed</label>
-                            <select id="breed" name="breed" class="form-select">
-                                <option value="">All Breeds</option>
-                                {% for breed_val in all_breeds %}
-                                    <option value="{{ breed_val }}" {% if breed_filter == breed_val %}selected{% endif %}>{{ breed_val }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Age Group -->
-                        <div class="mb-3">
-                            <label for="age_group" class="form-label text-sm fw-bold">Age Group</label>
-                            <select id="age_group" name="age_group" class="form-select">
-                                <option value="">All Ages</option>
-                                <option value="baby" {% if age_group_filter == 'baby' %}selected{% endif %}>Baby / Puppy / Kitten (< 1 yr)</option>
-                                <option value="young" {% if age_group_filter == 'young' %}selected{% endif %}>Young (1-3 yrs)</option>
-                                <option value="adult" {% if age_group_filter == 'adult' %}selected{% endif %}>Adult (3-8 yrs)</option>
-                                <option value="senior" {% if age_group_filter == 'senior' %}selected{% endif %}>Senior (8+ yrs)</option>
-                            </select>
-                        </div>
-
-                        <!-- Gender -->
-                        <div class="mb-3">
-                            <label for="gender" class="form-label text-sm fw-bold">Gender</label>
-                            <select id="gender" name="gender" class="form-select">
-                                <option value="">All Genders</option>
-                                <option value="Male" {% if gender_filter == 'Male' %}selected{% endif %}>Male</option>
-                                <option value="Female" {% if gender_filter == 'Female' %}selected{% endif %}>Female</option>
-                            </select>
-                        </div>
-
-                        <!-- Size -->
-                        <div class="mb-3">
-                            <label for="size" class="form-label text-sm fw-bold">Size</label>
-                            <select id="size" name="size" class="form-select">
-                                <option value="">All Sizes</option>
-                                <option value="Small" {% if size_filter == 'Small' %}selected{% endif %}>Small</option>
-                                <option value="Medium" {% if size_filter == 'Medium' %}selected{% endif %}>Medium</option>
-                                <option value="Large" {% if size_filter == 'Large' %}selected{% endif %}>Large</option>
-                            </select>
-                        </div>
-
-                        <!-- Location -->
-                        <div class="mb-3">
-                            <label for="location" class="form-label text-sm fw-bold">Location</label>
-                            <select id="location" name="location" class="form-select">
-                                <option value="">All Locations</option>
-                                {% for loc in all_locations %}
-                                    <option value="{{ loc }}" {% if location_filter == loc %}selected{% endif %}>{{ loc }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Vaccinated -->
-                        <div class="mb-4">
-                            <label for="vaccinated" class="form-label text-sm fw-bold">Vaccination Status</label>
-                            <select id="vaccinated" name="vaccinated" class="form-select">
-                                <option value="">All</option>
-                                <option value="yes" {% if vaccinated_filter == 'yes' %}selected{% endif %}>Fully Vaccinated</option>
-                                <option value="no" {% if vaccinated_filter == 'no' %}selected{% endif %}>Not Vaccinated</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary-custom w-100"><i class="fa-solid fa-filter me-2"></i> Apply Filters</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Pet List Grid -->
-            <div class="col-lg-9">
-                <div class="row g-4">
-                    {% if pets %}
-                        {% for pet in pets %}
-                            <div class="col-md-6 col-xl-4">
-                                <div class="pet-card">
-                                    <div class="pet-card-img-container">
-                                        {% if pet.photo %}
-                                            <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" class="pet-card-img">
-                                        {% else %}
-                                            <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" class="pet-card-img">
-                                        {% endif %}
-                                        <span class="pet-badge-gender">
-                                            {% if pet.gender == 'Male' %}
-                                                <i class="fa-solid fa-mars gender-male"></i> Male
-                                            {% else %}
-                                                <i class="fa-solid fa-venus gender-female"></i> Female
-                                            {% endif %}
-                                        </span>
-                                    </div>
-                                    <div class="pet-card-body">
-                                        <div>
-                                            <div class="pet-card-title">
-                                                <h3 class="h5 mb-0 fw-bold">{{ pet.name }}</h3>
-                                                <span class="badge bg-light text-dark border">{{ pet.species }}</span>
-                                            </div>
-                                            <p class="pet-card-details mb-2">
-                                                {% if pet.breed %}{{ pet.breed }}{% else %}Mixed Breed{% endif %} &bull; 
-                                                {{ pet.age }} {% if pet.age == 1 %}year{% else %}years{% endif %} old
-                                            </p>
-                                            <p class="text-muted text-sm mb-3">
-                                                <i class="fa-solid fa-location-dot text-primary me-1"></i> {{ pet.location }}
-                                            </p>
-                                        </div>
-                                        <div class="pet-card-footer">
-                                            <span class="badge bg-soft-success text-success" style="background-color: var(--primary-light); color: var(--primary);">
-                                                {% if pet.vaccinated %}<i class="fa-solid fa-shield-dog"></i> Vaccinated{% else %}Not Vaccinated{% endif %}
-                                            </span>
-                                            <a href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}" class="btn btn-primary-custom btn-sm">View Details</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="col-12 text-center py-5">
-                            <div class="text-muted mb-3"><i class="fa-solid fa-paw fa-3x"></i></div>
-                            <h4>No pets match your criteria.</h4>
-                            <p class="text-muted">Try resetting the filters or broadening your search parameters.</p>
-                            <a href="{{ url_for('pets.pet_list') }}" class="btn btn-primary-custom mt-3">Reset All Filters</a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+            <!-- Mobile Filter Trigger Button -->
+            <button
+              id="open-filters-btn"
+              class="lg:hidden py-3 px-5 bg-white border border-border/80 text-dark font-bold rounded-xl flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all text-sm"
+            >
+                <i class="fa-solid fa-sliders text-primary"></i> Show Filters
+            </button>
         </div>
     </div>
-</section>
+
+    <!-- Main Content Layout -->
+    <div class="lg:grid lg:grid-cols-12 lg:gap-8 items-start">
+        <!-- Sidebar Filters (Desktop only) -->
+        <aside class="hidden lg:block lg:col-span-3 sticky top-24 bg-white border border-border/60 rounded-[32px] p-6 shadow-sm">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-black text-dark flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-primary"></i> Filters
+                </h2>
+                <a href="{{ url_for('pets.pet_list') }}" class="text-xs font-bold text-slate-400 hover:text-primary transition-colors">Reset All</a>
+            </div>
+
+            <form method="GET" action="{{ url_for('pets.pet_list') }}" class="space-y-4 text-left">
+                <!-- Search term -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="search" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Search</label>
+                    <div class="relative flex items-center">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-slate-400 text-sm"></i>
+                        <input
+                          type="text"
+                          id="search"
+                          name="search"
+                          placeholder="Name or breed..."
+                          value="{{ search }}"
+                          class="w-full bg-slate-50/50 pl-10 pr-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark placeholder:text-slate-400 font-semibold focus:bg-white focus:border-primary transition-colors"
+                        />
+                    </div>
+                </div>
+
+                <!-- Species -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="species" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Species</label>
+                    <select
+                      id="species"
+                      name="species"
+                      class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+                    >
+                        <option value="">All Species</option>
+                        <option value="Dog" {% if species_filter == 'Dog' %}selected{% endif %}>Dog</option>
+                        <option value="Cat" {% if species_filter == 'Cat' %}selected{% endif %}>Cat</option>
+                        <option value="Rabbit" {% if species_filter == 'Rabbit' %}selected{% endif %}>Rabbit</option>
+                        <option value="Bird" {% if species_filter == 'Bird' %}selected{% endif %}>Bird</option>
+                        <option value="Other" {% if species_filter == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <!-- Breed -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="breed" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Breed</label>
+                    <select
+                      id="breed"
+                      name="breed"
+                      class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+                    >
+                        <option value="">All Breeds</option>
+                        {% for breed_val in all_breeds %}
+                            <option value="{{ breed_val }}" {% if breed_filter == breed_val %}selected{% endif %}>{{ breed_val }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Age Group -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="age_group" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Age Group</label>
+                    <select
+                      id="age_group"
+                      name="age_group"
+                      class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+                    >
+                        <option value="">All Ages</option>
+                        <option value="baby" {% if age_group_filter == 'baby' %}selected{% endif %}>Baby / Puppy (< 1 yr)</option>
+                        <option value="young" {% if age_group_filter == 'young' %}selected{% endif %}>Young (1-3 yrs)</option>
+                        <option value="adult" {% if age_group_filter == 'adult' %}selected{% endif %}>Adult (3-8 yrs)</option>
+                        <option value="senior" {% if age_group_filter == 'senior' %}selected{% endif %}>Senior (8+ yrs)</option>
+                    </select>
+                </div>
+
+                <!-- Gender -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="gender" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Gender</label>
+                    <select
+                      id="gender"
+                      name="gender"
+                      class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+                    >
+                        <option value="">All Genders</option>
+                        <option value="Male" {% if gender_filter == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if gender_filter == 'Female' %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+
+                <!-- Size -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="size" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Size</label>
+                    <select
+                      id="size"
+                      name="size"
+                      class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+                    >
+                        <option value="">All Sizes</option>
+                        <option value="Small" {% if size_filter == 'Small' %}selected{% endif %}>Small</option>
+                        <option value="Medium" {% if size_filter == 'Medium' %}selected{% endif %}>Medium</option>
+                        <option value="Large" {% if size_filter == 'Large' %}selected{% endif %}>Large</option>
+                    </select>
+                </div>
+
+                <!-- Location -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="location" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Location</label>
+                    <select
+                      id="location"
+                      name="location"
+                      class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+                    >
+                        <option value="">All Locations</option>
+                        {% for loc in all_locations %}
+                            <option value="{{ loc }}" {% if location_filter == loc %}selected{% endif %}>{{ loc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Vaccinated -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="vaccinated" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Vaccination Status</label>
+                    <select
+                      id="vaccinated"
+                      name="vaccinated"
+                      class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+                    >
+                        <option value="">All</option>
+                        <option value="yes" {% if vaccinated_filter == 'yes' %}selected{% endif %}>Fully Vaccinated</option>
+                        <option value="no" {% if vaccinated_filter == 'no' %}selected{% endif %}>Not Vaccinated</option>
+                    </select>
+                </div>
+
+                <button
+                  type="submit"
+                  class="w-full py-3 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl shadow-md shadow-primary/20 transition-all text-sm active:scale-95 hover:-translate-y-0.5 mt-2"
+                >
+                    <i class="fa-solid fa-filter mr-1.5"></i> Apply Filters
+                </button>
+            </form>
+        </aside>
+
+        <!-- Pet List Grid -->
+        <main class="lg:col-span-9">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% if pets %}
+                    {% for pet in pets %}
+                        <!-- Pet Card -->
+                        <div class="group bg-white border border-border/60 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/30 flex flex-col h-full transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="relative h-[240px] overflow-hidden">
+                                <!-- Favorite Heart Icon -->
+                                <button
+                                  data-pet-id="{{ pet.id }}"
+                                  class="fav-btn absolute top-4 left-4 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md text-slate-400 hover:text-red-500 hover:scale-110 active:scale-95 transition-all z-10"
+                                >
+                                    <i class="fa-solid fa-heart text-base"></i>
+                                </button>
+                                
+                                <!-- Status Badge -->
+                                <span class="absolute top-4 right-4 text-xs font-bold px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full shadow-sm">
+                                    Available
+                                </span>
+
+                                <!-- Pet Image -->
+                                {% if pet.photo %}
+                                    <img
+                                      src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}"
+                                      alt="{{ pet.name }}"
+                                      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                {% else %}
+                                    <img
+                                      src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}"
+                                      alt="{{ pet.name }}"
+                                      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                {% endif %}
+                            </div>
+
+                            <div class="p-5 flex-grow flex flex-col justify-between text-left">
+                                <div>
+                                    <div class="flex justify-between items-center mb-2.5">
+                                        <h3 class="text-lg font-black text-dark group-hover:text-primary transition-colors">{{ pet.name }}</h3>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 bg-slate-100 border border-slate-200 text-slate-600 rounded-md">
+                                            {{ pet.species }}
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Breed, Age, Gender Chips -->
+                                    <div class="flex flex-wrap gap-1.5 mb-4">
+                                        <span class="text-[10px] font-semibold px-2 py-0.5 bg-primary-light text-primary rounded">
+                                            {% if pet.breed %}{{ pet.breed }}{% else %}Mixed Breed{% endif %}
+                                        </span>
+                                        <span class="text-[10px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">
+                                            {{ pet.age }} {% if pet.age == 1 %}yr{% else %}yrs{% endif %} old
+                                        </span>
+                                        <span class="text-[10px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">
+                                            {{ pet.gender }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Location -->
+                                    <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-4 font-semibold">
+                                        <i class="fa-solid fa-location-dot text-primary"></i>
+                                        <span>{{ pet.location }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t border-border/40 pt-4 flex justify-between items-center">
+                                    <span class="text-[10px] font-bold px-2 py-1 bg-emerald-50 text-emerald-700 rounded">
+                                        {% if pet.vaccinated %}✓ Vaccinated{% else %}Not Vaccinated{% endif %}
+                                    </span>
+                                    <a href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}" class="py-1.5 px-4 bg-primary hover:bg-primary-hover text-white font-bold rounded-full text-xs shadow-sm transition-all active:scale-95">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Empty State -->
+                    <div class="col-span-full py-16 px-6 bg-primary-light/10 border border-dashed border-border rounded-[32px] text-center">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                            🐾
+                        </div>
+                        <h3 class="text-lg font-black text-dark mb-1">No matching companions found</h3>
+                        <p class="text-slate-400 text-sm max-w-sm mx-auto mb-6">We couldn't find any pets matching your active filter criteria. Try expanding your filters or resetting them.</p>
+                        <a href="{{ url_for('pets.pet_list') }}" class="inline-flex py-2.5 px-6 bg-primary hover:bg-primary-hover text-white font-bold rounded-full text-sm shadow-md shadow-primary/20 transition-all active:scale-95">
+                            Reset All Filters
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Mobile Filter Bottom Sheet/Drawer (triggered by open-filters-btn) -->
+<div id="mobile-filter-drawer" class="mobile-filter-drawer lg:hidden px-6 pt-5 pb-8">
+    <!-- Drawer Handle -->
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-lg font-black text-dark flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-primary"></i> Filters
+        </h2>
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('pets.pet_list') }}" class="text-xs font-bold text-slate-400 hover:text-primary transition-colors">Reset All</a>
+            <button id="close-filters-btn" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <form method="GET" action="{{ url_for('pets.pet_list') }}" class="space-y-4 text-left">
+        <!-- Search term -->
+        <div class="flex flex-col gap-1.5">
+            <label for="search-m" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Search</label>
+            <div class="relative flex items-center">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-slate-400 text-sm"></i>
+                <input
+                  type="text"
+                  id="search-m"
+                  name="search"
+                  placeholder="Name or breed..."
+                  value="{{ search }}"
+                  class="w-full bg-slate-50/50 pl-10 pr-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark placeholder:text-slate-400 font-semibold focus:bg-white focus:border-primary transition-colors"
+                />
+            </div>
+        </div>
+
+        <!-- Species -->
+        <div class="flex flex-col gap-1.5">
+            <label for="species-m" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Species</label>
+            <select
+              id="species-m"
+              name="species"
+              class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+            >
+                <option value="">All Species</option>
+                <option value="Dog" {% if species_filter == 'Dog' %}selected{% endif %}>Dog</option>
+                <option value="Cat" {% if species_filter == 'Cat' %}selected{% endif %}>Cat</option>
+                <option value="Rabbit" {% if species_filter == 'Rabbit' %}selected{% endif %}>Rabbit</option>
+                <option value="Bird" {% if species_filter == 'Bird' %}selected{% endif %}>Bird</option>
+                <option value="Other" {% if species_filter == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+        </div>
+
+        <!-- Breed -->
+        <div class="flex flex-col gap-1.5">
+            <label for="breed-m" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Breed</label>
+            <select
+              id="breed-m"
+              name="breed"
+              class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+            >
+                <option value="">All Breeds</option>
+                {% for breed_val in all_breeds %}
+                    <option value="{{ breed_val }}" {% if breed_filter == breed_val %}selected{% endif %}>{{ breed_val }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Age Group -->
+        <div class="flex flex-col gap-1.5">
+            <label for="age_group-m" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Age Group</label>
+            <select
+              id="age_group-m"
+              name="age_group"
+              class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+            >
+                <option value="">All Ages</option>
+                <option value="baby" {% if age_group_filter == 'baby' %}selected{% endif %}>Baby / Puppy (< 1 yr)</option>
+                <option value="young" {% if age_group_filter == 'young' %}selected{% endif %}>Young (1-3 yrs)</option>
+                <option value="adult" {% if age_group_filter == 'adult' %}selected{% endif %}>Adult (3-8 yrs)</option>
+                <option value="senior" {% if age_group_filter == 'senior' %}selected{% endif %}>Senior (8+ yrs)</option>
+            </select>
+        </div>
+
+        <!-- Gender -->
+        <div class="flex flex-col gap-1.5">
+            <label for="gender-m" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Gender</label>
+            <select
+              id="gender-m"
+              name="gender"
+              class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+            >
+                <option value="">All Genders</option>
+                <option value="Male" {% if gender_filter == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if gender_filter == 'Female' %}selected{% endif %}>Female</option>
+            </select>
+        </div>
+
+        <!-- Size -->
+        <div class="flex flex-col gap-1.5">
+            <label for="size-m" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Size</label>
+            <select
+              id="size-m"
+              name="size"
+              class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+            >
+                <option value="">All Sizes</option>
+                <option value="Small" {% if size_filter == 'Small' %}selected{% endif %}>Small</option>
+                <option value="Medium" {% if size_filter == 'Medium' %}selected{% endif %}>Medium</option>
+                <option value="Large" {% if size_filter == 'Large' %}selected{% endif %}>Large</option>
+            </select>
+        </div>
+
+        <!-- Location -->
+        <div class="flex flex-col gap-1.5">
+            <label for="location-m" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Location</label>
+            <select
+              id="location-m"
+              name="location"
+              class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+            >
+                <option value="">All Locations</option>
+                {% for loc in all_locations %}
+                    <option value="{{ loc }}" {% if location_filter == loc %}selected{% endif %}>{{ loc }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Vaccinated -->
+        <div class="flex flex-col gap-1.5">
+            <label for="vaccinated-m" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Vaccination Status</label>
+            <select
+              id="vaccinated-m"
+              name="vaccinated"
+              class="w-full bg-slate-50/50 px-3.5 py-2.5 rounded-xl border border-border outline-none text-sm text-dark font-semibold focus:bg-white focus:border-primary transition-colors"
+            >
+                <option value="">All</option>
+                <option value="yes" {% if vaccinated_filter == 'yes' %}selected{% endif %}>Fully Vaccinated</option>
+                <option value="no" {% if vaccinated_filter == 'no' %}selected{% endif %}>Not Vaccinated</option>
+            </select>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-4 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl shadow-md shadow-primary/20 transition-all text-sm active:scale-95 hover:-translate-y-0.5 mt-2"
+        >
+            <i class="fa-solid fa-filter mr-1.5"></i> Apply Filters
+        </button>
+    </form>
+</div>
+
+<!-- Backdrop Overlay for Mobile Drawer (with id="overlay-backdrop") -->
+<div id="overlay-backdrop" class="overlay-backdrop"></div>
 {% endblock %}

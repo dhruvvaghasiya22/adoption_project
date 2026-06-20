@@ -3,6 +3,7 @@ from flask import Flask
 from flask_login import LoginManager
 from PIL import Image, ImageDraw, ImageFont
 
+from flask_cors import CORS
 from config import Config
 from models import db, User, Pet, AdoptionApplication
 from werkzeug.security import generate_password_hash
@@ -17,6 +18,10 @@ from admin_routes import admin_bp
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    # Enable CORS for React frontend development server
+    CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
+
 
     # Initialize Database
     db.init_app(app)

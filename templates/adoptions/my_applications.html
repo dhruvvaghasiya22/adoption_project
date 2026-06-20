@@ -3,84 +3,185 @@
 {% block title %}My Applications{% endblock %}
 
 {% block content %}
-<section class="py-5">
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ url_for('general.home') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">My Applications</li>
-                    </ol>
-                </nav>
-                <h1 class="fw-bold mb-1">My Adoption Applications</h1>
-                <p class="text-muted">Track the status of your applications below</p>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-12">
-                {% if applications %}
-                    <div class="table-responsive shadow-sm rounded-4 border bg-white">
-                        <table class="table table-hover table-custom mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Pet</th>
-                                    <th>Location</th>
-                                    <th>Applied On</th>
-                                    <th>Home Type</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for app in applications %}
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 8px; border: 1px solid var(--border-color);">
-                                                    {% if app.pet.photo %}
-                                                        <img src="{{ url_for('static', filename='uploads/pet_photos/' + app.pet.photo) }}" alt="{{ app.pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                    {% else %}
-                                                        <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ app.pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                    {% endif %}
-                                                </div>
-                                                <div>
-                                                    <h5 class="h6 mb-0 fw-bold">{{ app.pet.name }}</h5>
-                                                    <span class="text-sm text-muted">{{ app.pet.species }} &bull; {% if app.pet.breed %}{{ app.pet.breed }}{% else %}Mixed{% endif %}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{{ app.pet.location }}</td>
-                                        <td>{{ app.applied_at.strftime('%B %d, %Y') }}</td>
-                                        <td>{{ app.home_type }}</td>
-                                        <td>
-                                            {% if app.status == 'pending' %}
-                                                <span class="badge-status badge-pending"><i class="fa-regular fa-clock me-1"></i> Pending</span>
-                                            {% elif app.status == 'approved' %}
-                                                <span class="badge-status badge-approved"><i class="fa-solid fa-circle-check me-1"></i> Approved</span>
-                                            {% elif app.status == 'rejected' %}
-                                                <span class="badge-status badge-rejected"><i class="fa-solid fa-circle-xmark me-1"></i> Rejected</span>
-                                            {% endif %}
-                                        </td>
-                                        <td class="text-end">
-                                            <a href="{{ url_for('pets.pet_detail', pet_id=app.pet.id) }}" class="btn btn-outline-custom btn-sm py-1 px-3">View Pet Details</a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div class="text-center py-5 bg-white rounded-4 border shadow-sm">
-                        <div class="text-muted mb-3"><i class="fa-solid fa-file-invoice fa-3x"></i></div>
-                        <h4>You haven't applied for any pets yet.</h4>
-                        <p class="text-muted">Find your companion in our listings and submit an application.</p>
-                        <a href="{{ url_for('pets.pet_list') }}" class="btn btn-primary-custom mt-3">Browse Pets</a>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
+<div class="container mx-auto max-w-7xl px-6 md:px-12 py-12">
+    <!-- Breadcrumb & Header -->
+    <div class="mb-10 text-left animate-fade-in-up">
+        <nav class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+            <a href="{{ url_for('general.home') }}" class="hover:text-primary transition-colors">Home</a>
+            <span>/</span>
+            <span class="text-slate-500">My Applications</span>
+        </nav>
+        <h1 class="text-3xl md:text-4xl font-black text-dark mb-2">My Adoption Applications</h1>
+        <p class="text-slate-500 text-sm md:text-base">Track and check the review process of your screening requests.</p>
     </div>
-</section>
+
+    <!-- Content Area -->
+    <div class="animate-fade-in-up" style="animation-delay: 100ms;">
+        {% if applications %}
+            <!-- Desktop/Tablet Table Layout -->
+            <div class="hidden md:block bg-white border border-border/60 rounded-[32px] overflow-hidden shadow-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/70 border-b border-border/60">
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Pet</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Location</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Applied On</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Home Type</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for app in applications %}
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <!-- Pet summary -->
+                                <td class="py-5 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 rounded-xl overflow-hidden border border-border bg-slate-50 flex-shrink-0">
+                                            {% if app.pet.photo %}
+                                                <img src="{{ url_for('static', filename='uploads/pet_photos/' + app.pet.photo) }}" alt="{{ app.pet.name }}" class="w-full h-full object-cover">
+                                            {% else %}
+                                                <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ app.pet.name }}" class="w-full h-full object-cover">
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-black text-dark">{{ app.pet.name }}</h4>
+                                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{{ app.pet.species }} &bull; {% if app.pet.breed %}{{ app.pet.breed }}{% else %}Mixed Breed{% endif %}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <!-- Location -->
+                                <td class="py-5 px-6 text-sm text-slate-500 font-semibold">
+                                    {{ app.pet.location }}
+                                </td>
+                                <!-- Applied On -->
+                                <td class="py-5 px-6 text-sm text-slate-500 font-semibold">
+                                    {{ app.applied_at.strftime('%B %d, %Y') }}
+                                </td>
+                                <!-- Home Type -->
+                                <td class="py-5 px-6 text-sm text-slate-500 font-semibold">
+                                    {{ app.home_type }}
+                                </td>
+                                <!-- Status Tag -->
+                                <td class="py-5 px-6">
+                                    {% if app.status == 'pending' %}
+                                        <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200/50 rounded-full">
+                                            <i class="fa-regular fa-clock"></i> Pending
+                                        </span>
+                                    {% elif app.status == 'approved' %}
+                                        <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200/50 rounded-full">
+                                            <i class="fa-solid fa-circle-check"></i> Approved
+                                        </span>
+                                    {% elif app.status == 'rejected' %}
+                                        <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 bg-red-50 text-red-700 border border-red-200/50 rounded-full">
+                                            <i class="fa-solid fa-circle-xmark"></i> Rejected
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <!-- Actions -->
+                                <td class="py-5 px-6 text-right">
+                                    <a
+                                      href="{{ url_for('pets.pet_detail', pet_id=app.pet.id) }}"
+                                      class="inline-block py-1.5 px-4 bg-primary-light hover:bg-primary/25 text-primary font-bold rounded-full text-xs transition-colors"
+                                    >
+                                        Details
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Card Layout -->
+            <div class="md:hidden space-y-4">
+                {% for app in applications %}
+                    <div class="bg-white border border-border/60 rounded-3xl p-5 shadow-sm text-left flex flex-col gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl overflow-hidden border border-border bg-slate-50 flex-shrink-0">
+                                {% if app.pet.photo %}
+                                    <img src="{{ url_for('static', filename='uploads/pet_photos/' + app.pet.photo) }}" alt="{{ app.pet.name }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ app.pet.name }}" class="w-full h-full object-cover">
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow">
+                                <span class="text-[9px] font-bold px-2 py-0.5 bg-primary-light text-primary rounded">
+                                    {{ app.pet.species }}
+                                </span>
+                                <h4 class="text-base font-black text-dark mt-1">{{ app.pet.name }}</h4>
+                                <p class="text-xs text-slate-400 font-semibold">{% if app.pet.breed %}{{ app.pet.breed }}{% else %}Mixed Breed{% endif %}</p>
+                            </div>
+                            <div>
+                                {% if app.status == 'pending' %}
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200/50 rounded-full">
+                                        Pending
+                                    </span>
+                                {% elif app.status == 'approved' %}
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200/50 rounded-full">
+                                        Approved
+                                    </span>
+                                {% elif app.status == 'rejected' %}
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 bg-red-50 text-red-700 border border-red-200/50 rounded-full">
+                                        Rejected
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-400">
+                            <div>
+                                <span class="block text-[10px] uppercase font-bold text-slate-400">Applied On</span>
+                                <span class="text-dark">{{ app.applied_at.strftime('%b %d, %Y') }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] uppercase font-bold text-slate-400">Home Type</span>
+                                <span class="text-dark">{{ app.home_type }}</span>
+                            </div>
+                        </div>
+
+                        <a
+                          href="{{ url_for('pets.pet_detail', pet_id=app.pet.id) }}"
+                          class="w-full py-2.5 bg-primary-light hover:bg-primary/25 text-primary font-bold rounded-xl text-xs text-center transition-colors"
+                        >
+                            View Pet Details
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State Sleeping Cat SVG -->
+            <div class="py-16 px-6 bg-primary-light/10 border border-dashed border-border rounded-[32px] text-center max-w-xl mx-auto flex flex-col items-center justify-center">
+                <svg class="w-32 h-32 text-primary/30 mb-6" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Cat Body -->
+                    <path d="M40 140C40 100 70 80 100 80C130 80 160 100 160 140C160 155 145 165 100 165C55 165 40 155 40 140Z" fill="currentColor"/>
+                    <!-- Cat Head -->
+                    <circle cx="140" cy="110" r="30" fill="currentColor"/>
+                    <!-- Ears -->
+                    <path d="M120 90L115 65L135 83Z" fill="currentColor"/>
+                    <path d="M160 90L165 65L145 83Z" fill="currentColor"/>
+                    <!-- Eyes closed (sleeping) -->
+                    <path d="M125 115Q130 119 135 115" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <path d="M145 115Q150 119 155 115" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <!-- Nose/mouth -->
+                    <path d="M140 120L138 123H142L140 120Z" fill="#fff"/>
+                    <!-- Tail wrapped -->
+                    <path d="M45 145C30 145 20 135 25 120C28 110 38 115 35 125C33 133 40 137 45 137" stroke="currentColor" stroke-width="5" stroke-linecap="round" fill="none"/>
+                    <!-- Zzz letters -->
+                    <text x="165" y="80" font-family="sans-serif" font-weight="bold" font-size="16" fill="currentColor" opacity="0.6">Z</text>
+                    <text x="175" y="65" font-family="sans-serif" font-weight="bold" font-size="12" fill="currentColor" opacity="0.4">z</text>
+                    <text x="183" y="55" font-family="sans-serif" font-weight="bold" font-size="10" fill="currentColor" opacity="0.2">z</text>
+                </svg>
+                <h3 class="text-lg font-black text-dark mb-1">No applications submitted yet</h3>
+                <p class="text-slate-400 text-sm max-w-xs mb-6">Find an animal you connect with in our gallery and start the screening process.</p>
+                <a
+                  href="{{ url_for('pets.pet_list') }}"
+                  class="inline-flex py-3 px-6 bg-primary hover:bg-primary-hover text-white font-bold rounded-full text-sm shadow-md shadow-primary/20 transition-all active:scale-95 hover:-translate-y-0.5"
+                >
+                    Browse Available Pets
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

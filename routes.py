@@ -16,10 +16,15 @@ def about():
 @general_bp.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
-        # Simulated contact form submission
-        name = request.form.get('name')
-        email = request.form.get('email')
-        message = request.form.get('message')
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        message = request.form.get('message', '').strip()
+        
+        if not name or not email or not message:
+            flash('Please fill in all required fields.', 'danger')
+            return redirect(url_for('general.contact'))
+            
         flash(f'Thank you, {name}! Your message has been received. We will contact you at {email} soon.', 'success')
         return redirect(url_for('general.contact'))
+        
     return render_template('contact.html')

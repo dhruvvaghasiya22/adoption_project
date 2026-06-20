@@ -33,13 +33,13 @@ def dashboard():
                                pending_apps=pending_apps)
                                
     elif current_user.role == 'admin':
-        # General application stats
+        # General stats
         total_users = User.query.count()
         total_pets = Pet.query.count()
         total_applications = AdoptionApplication.query.count()
         adopted_pets = Pet.query.filter_by(is_adopted=True).count()
         
-        # Latest database records to show on dashboard summary
+        # Latest database records
         latest_users = User.query.order_by(User.created_at.desc()).limit(5).all()
         latest_pets = Pet.query.order_by(Pet.created_at.desc()).limit(5).all()
         latest_applications = AdoptionApplication.query.order_by(AdoptionApplication.applied_at.desc()).limit(5).all()
@@ -80,7 +80,6 @@ def approve_application(application_id):
     application = AdoptionApplication.query.get_or_404(application_id)
     pet = Pet.query.get_or_404(application.pet_id)
     
-    # Auth check: must be admin or the shelter that owns the pet
     if current_user.role != 'admin' and pet.shelter_id != current_user.id:
         abort(403)
         
@@ -88,22 +87,20 @@ def approve_application(application_id):
         flash('This pet has already been adopted!', 'danger')
         return redirect(request.referrer or url_for('admin.dashboard'))
         
-    # Update application and pet status
     application.status = 'approved'
     pet.is_adopted = True
     
-    # Auto-reject all other pending applications for the same pet
+    # Auto-reject other pending applications
     other_apps = AdoptionApplication.query.filter(
         AdoptionApplication.pet_id == pet.id,
         AdoptionApplication.id != application.id,
         AdoptionApplication.status == 'pending'
     ).all()
-    
     for app in other_apps:
         app.status = 'rejected'
         
     db.session.commit()
-    flash(f'Application approved! {pet.name} has been marked as adopted, and other pending applications for this pet have been rejected.', 'success')
+    flash(f'Application approved! {pet.name} has been marked as adopted.', 'success')
     return redirect(request.referrer or url_for('admin.dashboard'))
 
 
@@ -114,12 +111,11 @@ def reject_application(application_id):
     application = AdoptionApplication.query.get_or_404(application_id)
     pet = Pet.query.get_or_404(application.pet_id)
     
-    # Auth check
     if current_user.role != 'admin' and pet.shelter_id != current_user.id:
         abort(403)
         
     application.status = 'rejected'
     db.session.commit()
     
-    flash(f'Adoption application for {pet.name} was rejected.', 'warning')
+    flash(f'Application for {pet.name} was rejected.', 'warning')
     return redirect(request.referrer or url_for('admin.dashboard'))

@@ -3,97 +3,206 @@
 {% block title %}Manage All Pets{% endblock %}
 
 {% block content %}
-<section class="py-5">
-    <div class="container">
-        <!-- Breadcrumb -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ url_for('general.home') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Manage Pets</li>
-                    </ol>
-                </nav>
-                <div class="d-flex justify-content-between align-items-center">
-                    <h1 class="fw-bold mb-0">Manage All Pets</h1>
-                    <a href="{{ url_for('pets.add_pet') }}" class="btn btn-primary-custom btn-sm"><i class="fa-solid fa-plus me-1"></i> Add Pet</a>
-                </div>
-            </div>
+<div class="container mx-auto max-w-7xl px-6 md:px-12 py-12 text-left">
+    <!-- Breadcrumbs & Header -->
+    <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fade-in-up">
+        <div>
+            <nav class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                <a href="{{ url_for('general.home') }}" class="hover:text-primary transition-colors">Home</a>
+                <span>/</span>
+                <a href="{{ url_for('admin.dashboard') }}" class="hover:text-primary transition-colors">Dashboard</a>
+                <span>/</span>
+                <span class="text-slate-500">Manage Pets</span>
+            </nav>
+            <h1 class="text-3xl font-black text-dark mb-2">Manage All Pets</h1>
+            <p class="text-slate-500 text-sm md:text-base">List new pets, edit details, or remove active listings across all organization partners.</p>
         </div>
-
-        <div class="row">
-            <div class="col-12">
-                {% if pets %}
-                    <div class="table-responsive rounded-4 border bg-white shadow-sm">
-                        <table class="table table-hover table-custom mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Pet Name</th>
-                                    <th>Species & Breed</th>
-                                    <th>Location</th>
-                                    <th>Age & Size</th>
-                                    <th>Shelter User</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for pet in pets %}
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 8px; border: 1px solid var(--border-color);">
-                                                    {% if pet.photo %}
-                                                        <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                    {% else %}
-                                                        <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                    {% endif %}
-                                                </div>
-                                                <h5 class="h6 mb-0 fw-bold">{{ pet.name }}</h5>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <strong>{{ pet.species }}</strong>
-                                            <span class="text-sm text-muted d-block">{% if pet.breed %}{{ pet.breed }}{% else %}Mixed{% endif %}</span>
-                                        </td>
-                                        <td>{{ pet.location }}</td>
-                                        <td>
-                                            {{ pet.age }} yrs / {{ pet.size }}
-                                        </td>
-                                        <td>
-                                            <strong>{{ pet.shelter.name }}</strong>
-                                            <span class="text-sm text-muted d-block" style="font-size: 0.8rem;">{{ pet.shelter.email }}</span>
-                                        </td>
-                                        <td>
-                                            {% if pet.is_adopted %}
-                                                <span class="badge-status badge-approved">Adopted</span>
-                                            {% else %}
-                                                <span class="badge-status badge-pending">Available</span>
-                                            {% endif %}
-                                        </td>
-                                        <td class="text-end">
-                                            <div class="d-flex justify-content-end gap-2">
-                                                <a href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-eye"></i></a>
-                                                <a href="{{ url_for('pets.edit_pet', pet_id=pet.id) }}" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-pen"></i></a>
-                                                <form action="{{ url_for('pets.delete_pet', pet_id=pet.id) }}" method="POST" class="confirm-delete-form d-inline-block" data-pet-name="{{ pet.name }}">
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div class="text-center py-5 bg-white border rounded-4">
-                        <i class="fa-solid fa-dog fa-3x text-muted mb-3"></i>
-                        <h4>No pets found in database.</h4>
-                    </div>
-                {% endif %}
-            </div>
+        <div>
+            <a
+              href="{{ url_for('pets.add_pet') }}"
+              class="inline-flex py-3 px-6 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl shadow-md shadow-primary/25 transition-all text-sm active:scale-95 hover:-translate-y-0.5"
+            >
+                <i class="fa-solid fa-plus mr-1.5"></i> Add New Pet
+            </a>
         </div>
     </div>
-</section>
+
+    <!-- Listings Panel -->
+    <div class="animate-fade-in-up" style="animation-delay: 100ms;">
+        {% if pets %}
+            <!-- Desktop Table Layout -->
+            <div class="hidden md:block bg-white border border-border/60 rounded-[32px] overflow-hidden shadow-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/70 border-b border-border/60">
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Pet</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Species &amp; Breed</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Location</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Age &amp; Size</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Shelter Partner</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                            <th class="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for pet in pets %}
+                            <tr class="hover:bg-slate-50/30 transition-colors">
+                                <!-- Pet -->
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-11 h-11 rounded-xl overflow-hidden border border-border bg-slate-50 flex-shrink-0">
+                                            {% if pet.photo %}
+                                                <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" class="w-full h-full object-cover">
+                                            {% else %}
+                                                <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" class="w-full h-full object-cover">
+                                            {% endif %}
+                                        </div>
+                                        <h4 class="text-sm font-black text-dark">{{ pet.name }}</h4>
+                                    </div>
+                                </td>
+                                <!-- Species & Breed -->
+                                <td class="py-4 px-6 text-sm text-dark font-bold">
+                                    {{ pet.species }}
+                                    <span class="block text-[10px] text-slate-400 font-semibold mt-0.5">
+                                        {% if pet.breed %}{{ pet.breed }}{% else %}Mixed{% endif %}
+                                    </span>
+                                </td>
+                                <!-- Location -->
+                                <td class="py-4 px-6 text-sm text-slate-500 font-semibold">
+                                    {{ pet.location }}
+                                </td>
+                                <!-- Age & Size -->
+                                <td class="py-4 px-6 text-sm text-slate-500 font-semibold">
+                                    {{ pet.age }} yrs / {{ pet.size }}
+                                </td>
+                                <!-- Shelter Partner -->
+                                <td class="py-4 px-6 text-sm text-dark font-bold">
+                                    {{ pet.shelter.name }}
+                                    <span class="block text-[10px] text-slate-400 font-semibold mt-0.5">
+                                        {{ pet.shelter.email }}
+                                    </span>
+                                </td>
+                                <!-- Status -->
+                                <td class="py-4 px-6">
+                                    {% if pet.is_adopted %}
+                                        <span class="inline-flex text-[10px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md">Adopted</span>
+                                    {% else %}
+                                        <span class="inline-flex text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md">Available</span>
+                                    {% endif %}
+                                </td>
+                                <!-- Actions -->
+                                <td class="py-4 px-6 text-right">
+                                    <div class="flex justify-end items-center gap-1.5">
+                                        <a
+                                          href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}"
+                                          class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:text-primary hover:bg-primary-light flex items-center justify-center transition-colors"
+                                          title="View Details"
+                                        >
+                                            <i class="fa-solid fa-eye text-xs"></i>
+                                        </a>
+                                        <a
+                                          href="{{ url_for('pets.edit_pet', pet_id=pet.id) }}"
+                                          class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 flex items-center justify-center transition-colors"
+                                          title="Edit details"
+                                        >
+                                            <i class="fa-solid fa-pen text-xs"></i>
+                                        </a>
+                                        <form
+                                          action="{{ url_for('pets.delete_pet', pet_id=pet.id) }}"
+                                          method="POST"
+                                          class="inline-block"
+                                          onsubmit="return confirm('Are you sure you want to delete listing for {{ pet.name }}?');"
+                                        >
+                                            <button
+                                              type="submit"
+                                              class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors"
+                                              title="Delete listing"
+                                            >
+                                                <i class="fa-solid fa-trash-can text-xs"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Card Layout -->
+            <div class="md:hidden space-y-4">
+                {% for pet in pets %}
+                    <div class="bg-white border border-border/60 rounded-3xl p-5 shadow-sm text-left flex flex-col gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden border border-border bg-slate-50 flex-shrink-0">
+                                {% if pet.photo %}
+                                    <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" class="w-full h-full object-cover">
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow">
+                                <span class="text-[9px] font-bold px-2 py-0.5 bg-primary-light text-primary rounded">
+                                    {{ pet.species }}
+                                </span>
+                                <h4 class="text-base font-black text-dark mt-1">{{ pet.name }}</h4>
+                                <p class="text-xs text-slate-400 font-semibold">{% if pet.breed %}{{ pet.breed }}{% else %}Mixed Breed{% endif %}</p>
+                            </div>
+                            <div>
+                                {% if pet.is_adopted %}
+                                    <span class="inline-flex text-[9px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md">Adopted</span>
+                                {% else %}
+                                    <span class="inline-flex text-[9px] font-bold px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md">Available</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Listing Info -->
+                        <div class="bg-slate-50/50 p-3 rounded-2xl border border-slate-100 text-xs font-semibold text-slate-500 space-y-1.5">
+                            <p><span class="text-slate-400 uppercase text-[9px] font-bold tracking-wider mr-2">Location:</span> <span class="text-dark">{{ pet.location }}</span></p>
+                            <p><span class="text-slate-400 uppercase text-[9px] font-bold tracking-wider mr-2">Age/Size:</span> <span class="text-dark">{{ pet.age }} yrs / {{ pet.size }}</span></p>
+                            <p><span class="text-slate-400 uppercase text-[9px] font-bold tracking-wider mr-2">Shelter:</span> <span class="text-dark">{{ pet.shelter.name }} ({{ pet.shelter.email }})</span></p>
+                        </div>
+
+                        <!-- Actions Grid -->
+                        <div class="grid grid-cols-3 gap-2">
+                            <a
+                              href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}"
+                              class="py-2 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-dark font-bold rounded-xl text-xs text-center transition-colors"
+                            >
+                                View
+                            </a>
+                            <a
+                              href="{{ url_for('pets.edit_pet', pet_id=pet.id) }}"
+                              class="py-2 bg-emerald-50/50 hover:bg-emerald-50 text-emerald-700 font-bold rounded-xl text-xs text-center transition-colors border border-emerald-100"
+                            >
+                                Edit
+                            </a>
+                            <form
+                              action="{{ url_for('pets.delete_pet', pet_id=pet.id) }}"
+                              method="POST"
+                              class="inline-block"
+                              onsubmit="return confirm('Are you sure you want to delete {{ pet.name }}?');"
+                            >
+                                <button
+                                  type="submit"
+                                  class="w-full py-2 bg-red-50 hover:bg-red-100 text-red-500 font-bold rounded-xl text-xs text-center transition-colors border border-red-100 cursor-pointer"
+                                >
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty state -->
+            <div class="py-16 px-6 bg-primary-light/10 border border-dashed border-border rounded-[32px] text-center max-w-xl mx-auto flex flex-col items-center justify-center">
+                <i class="fa-solid fa-dog text-4xl text-slate-300 mb-3 block"></i>
+                <h3 class="text-lg font-black text-dark mb-1">No pets found</h3>
+                <p class="text-slate-400 text-sm max-w-xs">There are no pet listings currently in the platform database.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

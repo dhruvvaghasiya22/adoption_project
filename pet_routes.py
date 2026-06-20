@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
-from models import db, Pet, User
+from models import db, Pet
 from forms import PetForm
 from utils import role_required, save_photo
 
@@ -10,7 +10,7 @@ pets_bp = Blueprint('pets', __name__)
 def pet_list():
     query = Pet.query.filter_by(is_adopted=False)
     
-    # Get filter and search values from query parameters
+    # Get parameters
     search = request.args.get('search', '').strip()
     species = request.args.get('species', '').strip()
     breed = request.args.get('breed', '').strip()
@@ -20,11 +20,8 @@ def pet_list():
     age_group = request.args.get('age_group', '').strip()
     vaccinated = request.args.get('vaccinated', '').strip()
     
-    # Apply search filter (name or breed)
     if search:
         query = query.filter(db.or_(Pet.name.ilike(f'%{search}%'), Pet.breed.ilike(f'%{search}%')))
-    
-    # Apply dropdown filters
     if species:
         query = query.filter_by(species=species)
     if breed:
@@ -40,7 +37,6 @@ def pet_list():
     elif vaccinated == 'no':
         query = query.filter_by(vaccinated=False)
         
-    # Apply age group filter
     if age_group:
         if age_group == 'baby':
             query = query.filter(Pet.age < 1)
@@ -51,10 +47,9 @@ def pet_list():
         elif age_group == 'senior':
             query = query.filter(Pet.age > 8)
             
-    # Order by newest listing
     pets = query.order_by(Pet.created_at.desc()).all()
     
-    # Extract unique breeds and locations for dropdown filters
+    # Get dynamic filter choices
     all_breeds = db.session.query(Pet.breed).filter(Pet.is_adopted == False, Pet.breed != None).distinct().all()
     all_breeds = sorted([b[0] for b in all_breeds if b[0]])
     
@@ -120,18 +115,14 @@ def add_pet():
 @role_required('shelter', 'admin')
 def edit_pet(pet_id):
     pet = Pet.query.get_or_404(pet_id)
-    
-    # Authorization check: only owning shelter or admin can edit
     if current_user.role != 'admin' and pet.shelter_id != current_user.id:
         abort(403)
         
     form = PetForm(obj=pet)
     if form.validate_on_submit():
         if form.photo.data:
-            # Save new photo and update model field
             pet.photo = save_photo(form.photo.data)
             
-        # Update other fields
         pet.name = form.name.data.strip()
         pet.species = form.species.data
         pet.breed = form.breed.data.strip() if form.breed.data else None
@@ -155,8 +146,6 @@ def edit_pet(pet_id):
 @role_required('shelter', 'admin')
 def delete_pet(pet_id):
     pet = Pet.query.get_or_404(pet_id)
-    
-    # Authorization check
     if current_user.role != 'admin' and pet.shelter_id != current_user.id:
         abort(403)
         

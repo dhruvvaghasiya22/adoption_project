@@ -4,82 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Find Your Best Friend{% endblock %} | Pet Adoption Platform</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome for icons -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#FF6B5A',
+                            hover: '#E85042',
+                            light: '#ffece4',
+                        },
+                        secondary: '#FFD166',
+                        dark: '#2D2D2D',
+                        muted: '#6B7280',
+                        lightBg: '#FFF8F1',
+                        border: '#F3E8DD',
+                        success: '#4CAF50',
+                        warning: '#FFD166',
+                        danger: '#FF6B5A',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <!-- Custom Style Sheet -->
+    <!-- Custom CSS (custom transitions, keys, overlay) -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="bg-[#FFF8F1] text-[#2D2D2D] font-sans antialiased overflow-x-hidden flex flex-col min-h-screen">
 
-    <!-- Main Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
-        <div class="container">
-            <a class="navbar-brand navbar-brand-custom" href="{{ url_for('general.home') }}">
-                <i class="fa-solid fa-paw"></i> PetAdopt
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'general.home' %}active{% endif %}" href="{{ url_for('general.home') }}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'pets.pet_list' %}active{% endif %}" href="{{ url_for('pets.pet_list') }}">Browse Pets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'general.about' %}active{% endif %}" href="{{ url_for('general.about') }}">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'general.contact' %}active{% endif %}" href="{{ url_for('general.contact') }}">Contact</a>
-                    </li>
-                </ul>
-                <div class="d-flex align-items-center gap-2">
-                    {% if current_user.is_authenticated %}
-                        {% if current_user.role == 'adopter' %}
-                            <a href="{{ url_for('adoptions.my_applications') }}" class="nav-link me-2 {% if request.endpoint == 'adoptions.my_applications' %}active{% endif %}">
-                                <i class="fa-solid fa-file-invoice"></i> My Applications
-                            </a>
-                        {% elif current_user.role in ['shelter', 'admin'] %}
-                            <a href="{{ url_for('admin.dashboard') }}" class="nav-link me-2 {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
-                                <i class="fa-solid fa-table-columns"></i> Dashboard
-                            </a>
-                            <a href="{{ url_for('pets.add_pet') }}" class="btn btn-outline-custom me-2 btn-sm">
-                                <i class="fa-solid fa-plus"></i> Add Pet
-                            </a>
-                        {% endif %}
-                        <span class="navbar-text me-2 d-none d-md-inline">
-                            Hello, <strong>{{ current_user.name }}</strong> ({{ current_user.role | capitalize }})
-                        </span>
-                        <a href="{{ url_for('auth.logout') }}" class="btn btn-primary-custom btn-sm">Logout</a>
-                    {% else %}
-                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-custom btn-sm">Login</a>
-                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary-custom btn-sm">Register</a>
-                    {% endif %}
-                </div>
-            </div>
+    <!-- Header Navigation -->
+    <nav class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#f1e3d3]/60 shadow-sm py-4 px-6 md:px-12 flex justify-between items-center transition-all">
+        <a href="{{ url_for('general.home') }}" class="flex items-center gap-2 text-primary font-black text-2xl">
+            <i class="fa-solid fa-paw"></i>
+            <span>PetAdopt</span>
+        </a>
+
+        <!-- Desktop Links -->
+        <div class="hidden lg:flex items-center gap-1">
+            <a href="{{ url_for('general.home') }}" class="px-4 py-2 rounded-xl text-base font-semibold transition-all {% if request.endpoint == 'general.home' %}text-primary bg-primary-light{% else %}text-dark hover:text-primary hover:bg-primary-light/40{% endif %}">Home</a>
+            <a href="{{ url_for('pets.pet_list') }}" class="px-4 py-2 rounded-xl text-base font-semibold transition-all {% if request.endpoint == 'pets.pet_list' %}text-primary bg-primary-light{% else %}text-dark hover:text-primary hover:bg-primary-light/40{% endif %}">Browse Pets</a>
+            <a href="{{ url_for('general.about') }}" class="px-4 py-2 rounded-xl text-base font-semibold transition-all {% if request.endpoint == 'general.about' %}text-primary bg-primary-light{% else %}text-dark hover:text-primary hover:bg-primary-light/40{% endif %}">About Us</a>
+            <a href="{{ url_for('general.contact') }}" class="px-4 py-2 rounded-xl text-base font-semibold transition-all {% if request.endpoint == 'general.contact' %}text-primary bg-primary-light{% else %}text-dark hover:text-primary hover:bg-primary-light/40{% endif %}">Contact</a>
         </div>
+
+        <!-- Auth Actions -->
+        <div class="hidden lg:flex items-center gap-3">
+            {% if current_user.is_authenticated %}
+                <div class="flex items-center gap-4">
+                    {% if current_user.role == 'adopter' %}
+                        <a href="{{ url_for('adoptions.my_applications') }}" class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-base font-semibold transition-all {% if request.endpoint == 'adoptions.my_applications' %}text-primary bg-primary-light{% else %}text-dark hover:text-primary{% endif %}">
+                            <i class="fa-solid fa-file-invoice"></i> My Applications
+                        </a>
+                    {% elif current_user.role in ['shelter', 'admin'] %}
+                        <a href="{{ url_for('admin.dashboard') }}" class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-base font-semibold transition-all {% if request.endpoint == 'admin.dashboard' %}text-primary bg-primary-light{% else %}text-dark hover:text-primary{% endif %}">
+                            <i class="fa-solid fa-gauge"></i> Dashboard
+                        </a>
+                        <a href="{{ url_for('pets.add_pet') }}" class="px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary-light/40 font-semibold text-sm transition-all">
+                            <i class="fa-solid fa-plus mr-1"></i> Add Pet
+                        </a>
+                    {% endif %}
+                    <span class="text-sm font-medium text-slate-500">
+                        Hi, <strong>{{ current_user.name.split(' ')[0] }}</strong>
+                    </span>
+                    <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 hover:border-primary hover:text-primary font-semibold text-sm transition-all">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                </div>
+            {% else %}
+                <div class="flex items-center gap-2">
+                    <a href="{{ url_for('auth.login') }}" class="px-5 py-2.5 rounded-full border-2 border-primary text-primary hover:bg-primary-light font-bold text-sm transition-all">Login</a>
+                    <a href="{{ url_for('auth.register') }}" class="px-6 py-2.5 rounded-full bg-primary hover:bg-primary-hover text-white font-bold text-sm shadow-md shadow-primary/20 transition-all hover:-translate-y-0.5 active:scale-95">Register</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Mobile toggle menu -->
+        <button id="mobile-menu-btn" class="lg:hidden text-dark p-2 hover:bg-slate-100 rounded-xl">
+            <i class="fa-solid fa-bars text-xl"></i>
+        </button>
     </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu-drawer" class="hidden lg:hidden bg-white border-b border-[#f1e3d3]/60 px-6 py-4 flex flex-col gap-3 shadow-md z-30">
+        <a href="{{ url_for('general.home') }}" class="px-4 py-3 rounded-xl font-bold {% if request.endpoint == 'general.home' %}text-primary bg-primary-light{% else %}text-dark{% endif %}">Home</a>
+        <a href="{{ url_for('pets.pet_list') }}" class="px-4 py-3 rounded-xl font-bold {% if request.endpoint == 'pets.pet_list' %}text-primary bg-primary-light{% else %}text-dark{% endif %}">Browse Pets</a>
+        <a href="{{ url_for('general.about') }}" class="px-4 py-3 rounded-xl font-bold {% if request.endpoint == 'general.about' %}text-primary bg-primary-light{% else %}text-dark{% endif %}">About Us</a>
+        <a href="{{ url_for('general.contact') }}" class="px-4 py-3 rounded-xl font-bold {% if request.endpoint == 'general.contact' %}text-primary bg-primary-light{% else %}text-dark{% endif %}">Contact</a>
+        
+        <hr class="border-[#f1e3d3]/60 my-2" />
+
+        {% if current_user.is_authenticated %}
+            <div class="flex flex-col gap-3">
+                {% if current_user.role == 'adopter' %}
+                    <a href="{{ url_for('adoptions.my_applications') }}" class="px-4 py-3 rounded-xl font-bold flex items-center gap-2 {% if request.endpoint == 'adoptions.my_applications' %}text-primary bg-primary-light{% else %}text-dark{% endif %}">
+                        <i class="fa-solid fa-file-invoice"></i> My Applications
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="px-4 py-3 rounded-xl font-bold flex items-center gap-2 {% if request.endpoint == 'admin.dashboard' %}text-primary bg-primary-light{% else %}text-dark{% endif %}">
+                        <i class="fa-solid fa-gauge"></i> Dashboard
+                    </a>
+                {% endif %}
+                <span class="px-4 text-sm text-slate-500 font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-user"></i> Logged in: {{ current_user.name }}
+                </span>
+                <a href="{{ url_for('auth.logout') }}" class="px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+            </div>
+        {% else %}
+            <div class="flex flex-col gap-2.5 pt-2">
+                <a href="{{ url_for('auth.login') }}" class="w-full py-3 rounded-xl border-2 border-primary text-primary font-bold text-center">Login</a>
+                <a href="{{ url_for('auth.register') }}" class="w-full py-3 rounded-xl bg-primary text-white font-bold text-center">Register</a>
+            </div>
+        {% endif %}
+    </div>
 
     <!-- Flash message alerts container -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            <div class="container mt-4">
+            <div class="container mx-auto px-6 max-w-7xl mt-4 z-50">
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show" role="alert">
-                        {% if category == 'success' %}
-                            <i class="fa-solid fa-circle-check me-2"></i>
-                        {% elif category == 'danger' or category == 'error' %}
-                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
-                        {% else %}
-                            <i class="fa-solid fa-circle-info me-2"></i>
-                        {% endif %}
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <div class="alert-dismissible bg-{{ 'emerald-50 text-emerald-800 border-emerald-200' if category == 'success' else 'red-50 text-red-800 border-red-200' if category in ['danger', 'error'] else 'orange-50 text-orange-800 border-orange-200' }} border p-4 rounded-2xl flex justify-between items-center shadow-md animate-fade-in-up" role="alert">
+                        <div class="flex items-center gap-2">
+                            {% if category == 'success' %}
+                                <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                            {% elif category in ['danger', 'error'] %}
+                                <i class="fa-solid fa-triangle-exclamation text-red-500"></i>
+                            {% else %}
+                                <i class="fa-solid fa-circle-info text-primary"></i>
+                            {% endif %}
+                            <span class="font-medium text-sm">{{ message }}</span>
+                        </div>
+                        <button type="button" class="btn-close hover:opacity-75" onclick="this.parentElement.remove()" aria-label="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
                 {% endfor %}
             </div>
@@ -87,58 +153,151 @@
     {% endwith %}
 
     <!-- Main Content Area -->
-    <main class="min-vh-100">
+    <main class="flex-grow">
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 mb-4">
-                    <h5 class="text-white mb-3"><i class="fa-solid fa-paw text-primary"></i> PetAdopt</h5>
-                    <p class="text-muted">Connecting loving families with animals in need. Build a beautiful life with a new companion today.</p>
-                </div>
-                <div class="col-lg-2 col-md-4 mb-4">
-                    <h6 class="text-white mb-3">Quick Links</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ url_for('general.home') }}">Home</a></li>
-                        <li><a href="{{ url_for('pets.pet_list') }}">Browse Pets</a></li>
-                        <li><a href="{{ url_for('general.about') }}">About Us</a></li>
-                        <li><a href="{{ url_for('general.contact') }}">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2 col-md-4 mb-4">
-                    <h6 class="text-white mb-3">Resources</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Adoption Guide</a></li>
-                        <li><a href="#">Volunteer Info</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4 col-md-4 mb-4">
-                    <h6 class="text-white mb-3">Contact Us</h6>
-                    <p class="text-muted mb-1"><i class="fa-solid fa-envelope text-primary me-2"></i> info@petadopt.com</p>
-                    <p class="text-muted mb-1"><i class="fa-solid fa-phone text-primary me-2"></i> +1 (555) 019-2834</p>
-                    <p class="text-muted mb-3"><i class="fa-solid fa-location-dot text-primary me-2"></i> 123 Friendly Paw Lane, Barktown</p>
-                    <div class="footer-social-links">
-                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#"><i class="fa-brands fa-twitter"></i></a>
-                    </div>
+    <footer class="bg-[#2b2d42] text-[#ecf0f1] pt-16 pb-8 border-t-4 border-primary">
+        <div class="container mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h5 class="text-white text-xl font-black flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-paw text-primary"></i> PetAdopt
+                </h5>
+                <p class="text-slate-400 text-sm leading-relaxed">Connecting loving families with animals in need. Build a beautiful life with a new companion today.</p>
+            </div>
+            <div>
+                <h6 class="text-white font-bold text-lg mb-4">Quick Links</h6>
+                <div class="flex flex-col gap-2">
+                    <a href="{{ url_for('general.home') }}" class="text-left text-slate-300 hover:text-primary text-sm transition-all">Home</a>
+                    <a href="{{ url_for('pets.pet_list') }}" class="text-left text-slate-300 hover:text-primary text-sm transition-all">Browse Pets</a>
+                    <a href="{{ url_for('general.about') }}" class="text-left text-slate-300 hover:text-primary text-sm transition-all">About Us</a>
+                    <a href="{{ url_for('general.contact') }}" class="text-left text-slate-300 hover:text-primary text-sm transition-all">Contact</a>
                 </div>
             </div>
-            <div class="border-top border-secondary pt-3 mt-4 text-center">
-                <p class="text-muted mb-0">&copy; 2026 Pet Adoption Platform. Made with Flask.</p>
+            <div>
+                <h6 class="text-white font-bold text-lg mb-4">Resources</h6>
+                <div class="flex flex-col gap-2 text-slate-300 text-sm">
+                    <a href="#" class="hover:text-primary transition-all">FAQs</a>
+                    <a href="#" class="hover:text-primary transition-all">Adoption Guide</a>
+                    <a href="#" class="hover:text-primary transition-all">Volunteer Info</a>
+                    <a href="#" class="hover:text-primary transition-all">Privacy Policy</a>
+                </div>
             </div>
+            <div>
+                <h6 class="text-white font-bold text-lg mb-4">Contact Us</h6>
+                <p class="text-slate-400 text-sm mb-2 flex items-center gap-2"><span class="text-primary">✉</span> info@petadopt.com</p>
+                <p class="text-slate-400 text-sm mb-2 flex items-center gap-2"><span class="text-primary">📞</span> +1 (555) 019-2834</p>
+                <p class="text-slate-400 text-sm flex items-center gap-2"><span class="text-primary">📍</span> 123 Friendly Paw Lane, Barktown</p>
+            </div>
+        </div>
+        <div class="border-t border-slate-800 pt-8 mt-12 text-center text-slate-500 text-xs">
+            <p>&copy; 2026 Pet Adoption Platform. Made with Flask & Tailwind.</p>
         </div>
     </footer>
 
-    <!-- Bootstrap 5 Bundle JS (includes Popper) -->
+    <!-- ═══════════════════════════════════════════ -->
+    <!--   MOBILE BOTTOM NAVIGATION BAR (lg:hidden)  -->
+    <!--   Only visible on phones & small tablets     -->
+    <!-- ═══════════════════════════════════════════ -->
+    <nav id="mobileBottomNav" class="mobile-bottom-nav lg:hidden">
+        <!-- Home -->
+        <a href="{{ url_for('general.home') }}"
+           class="mob-nav-item {% if request.endpoint == 'general.home' %}active{% endif %}"
+           id="mob-nav-home">
+            <div class="mob-nav-icon-wrap">
+                <i class="fa-solid fa-house"></i>
+            </div>
+            <span>Home</span>
+        </a>
+
+        <!-- Browse Pets -->
+        <a href="{{ url_for('pets.pet_list') }}"
+           class="mob-nav-item {% if request.endpoint == 'pets.pet_list' %}active{% endif %}"
+           id="mob-nav-browse">
+            <div class="mob-nav-icon-wrap">
+                <i class="fa-solid fa-paw"></i>
+            </div>
+            <span>Browse</span>
+        </a>
+
+        <!-- Center Highlight: About Us -->
+        <a href="{{ url_for('general.about') }}"
+           class="mob-nav-item mob-nav-center {% if request.endpoint == 'general.about' %}active{% endif %}"
+           id="mob-nav-about">
+            <div class="mob-nav-icon-wrap center-btn">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+            <span>About</span>
+        </a>
+
+        <!-- Contact -->
+        <a href="{{ url_for('general.contact') }}"
+           class="mob-nav-item {% if request.endpoint == 'general.contact' %}active{% endif %}"
+           id="mob-nav-contact">
+            <div class="mob-nav-icon-wrap">
+                <i class="fa-solid fa-envelope"></i>
+            </div>
+            <span>Contact</span>
+        </a>
+
+        <!-- Auth: My Apps or Login -->
+        {% if current_user.is_authenticated %}
+            {% if current_user.role == 'adopter' %}
+            <a href="{{ url_for('adoptions.my_applications') }}"
+               class="mob-nav-item {% if request.endpoint == 'adoptions.my_applications' %}active{% endif %}"
+               id="mob-nav-auth">
+                <div class="mob-nav-icon-wrap">
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <span>My Apps</span>
+            </a>
+            {% else %}
+            <a href="{{ url_for('admin.dashboard') }}"
+               class="mob-nav-item {% if request.endpoint == 'admin.dashboard' %}active{% endif %}"
+               id="mob-nav-auth">
+                <div class="mob-nav-icon-wrap">
+                    <i class="fa-solid fa-gauge"></i>
+                </div>
+                <span>Dashboard</span>
+            </a>
+            {% endif %}
+        {% else %}
+        <a href="{{ url_for('auth.login') }}"
+           class="mob-nav-item {% if request.endpoint == 'auth.login' %}active{% endif %}"
+           id="mob-nav-auth">
+            <div class="mob-nav-icon-wrap">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <span>Login</span>
+        </a>
+        {% endif %}
+    </nav>
+
+    <!-- Bootstrap 5 JS (only bundle, used for alert dismiss and basic structures if needed) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
+    <!-- Custom Scripts -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Simple drawer toggle for mobile menu
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const menuDrawer = document.getElementById('mobile-menu-drawer');
+        if (menuBtn && menuDrawer) {
+            menuBtn.addEventListener('click', () => {
+                menuDrawer.classList.toggle('hidden');
+            });
+        }
+
+        // Mobile bottom nav: add ripple tap feedback
+        document.querySelectorAll('.mob-nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Remove active from all, add to clicked
+                document.querySelectorAll('.mob-nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+

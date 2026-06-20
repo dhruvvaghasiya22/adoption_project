@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request
 from flask_login import login_required, current_user
 from models import db, Pet, AdoptionApplication
 from forms import AdoptionForm
@@ -11,20 +11,17 @@ adoptions_bp = Blueprint('adoptions', __name__)
 @role_required('adopter')
 def apply(pet_id):
     pet = Pet.query.get_or_404(pet_id)
-    
-    # Check if pet is already adopted
     if pet.is_adopted:
         flash('This pet has already been adopted!', 'warning')
         return redirect(url_for('pets.pet_detail', pet_id=pet.id))
         
-    # Check if applicant has already applied for this pet
     existing_app = AdoptionApplication.query.filter_by(
         pet_id=pet.id,
         applicant_id=current_user.id
     ).first()
     
     if existing_app:
-        flash(f'You have already submitted an application for {pet.name} (Status: {existing_app.status.capitalize()}).', 'info')
+        flash(f'You have already submitted an application for {pet.name}.', 'info')
         return redirect(url_for('adoptions.my_applications'))
         
     form = AdoptionForm()
@@ -47,7 +44,6 @@ def apply(pet_id):
         flash(f'Your adoption application for {pet.name} has been submitted successfully!', 'success')
         return redirect(url_for('adoptions.my_applications'))
         
-    # Prefill the applicant's name and phone number if available in their profile
     if request.method == 'GET':
         form.full_name.data = current_user.name
         form.phone.data = current_user.phone

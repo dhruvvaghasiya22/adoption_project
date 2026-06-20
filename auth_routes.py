@@ -10,17 +10,15 @@ auth_bp = Blueprint('auth', __name__)
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('general.home'))
-    
+        
     form = RegisterForm()
     if form.validate_on_submit():
-        # Check if email is already in use
         email_lower = form.email.data.lower().strip()
         existing_user = User.query.filter_by(email=email_lower).first()
         if existing_user:
             flash('An account with this email already exists.', 'danger')
             return render_template('auth/register.html', form=form)
-        
-        # Create user object
+            
         hashed_password = generate_password_hash(form.password.data)
         new_user = User(
             name=form.name.data.strip(),
@@ -39,6 +37,7 @@ def register():
         
     return render_template('auth/register.html', form=form)
 
+
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -52,12 +51,10 @@ def login():
             login_user(user, remember=form.remember.data)
             flash(f'Welcome back, {user.name}!', 'success')
             
-            # Redirect to next parameter if present
             next_page = request.args.get('next')
             if next_page:
                 return redirect(next_page)
-            
-            # Default redirects based on role
+                
             if user.role in ['shelter', 'admin']:
                 return redirect(url_for('admin.dashboard'))
             return redirect(url_for('general.home'))
@@ -65,6 +62,7 @@ def login():
             flash('Invalid email or password.', 'danger')
             
     return render_template('auth/login.html', form=form)
+
 
 @auth_bp.route('/logout')
 @login_required

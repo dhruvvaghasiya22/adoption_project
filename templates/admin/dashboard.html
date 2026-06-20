@@ -3,305 +3,384 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<section class="py-5">
-    <div class="container">
-        <!-- Header -->
-        <div class="row mb-4">
-            <div class="col-12 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
-                <div>
-                    <h1 class="fw-bold mb-1">{% if role == 'admin' %}Administrator{% else %}Shelter{% endif %} Dashboard</h1>
-                    <p class="text-muted">Manage listings and review adoption applications</p>
+<div class="container mx-auto max-w-7xl px-6 md:px-12 py-12 text-left">
+    <!-- Header -->
+    <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fade-in-up">
+        <div>
+            <nav class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                <a href="{{ url_for('general.home') }}" class="hover:text-primary transition-colors">Home</a>
+                <span>/</span>
+                <span class="text-slate-500">Dashboard</span>
+            </nav>
+            <h1 class="text-3xl font-black text-dark mb-2">{% if role == 'admin' %}Administrator{% else %}Shelter{% endif %} Dashboard</h1>
+            <p class="text-slate-500 text-sm md:text-base">Manage listings, review adoption applications, and keep track of system statistics.</p>
+        </div>
+        <div>
+            {% if role == 'shelter' %}
+                <a
+                  href="{{ url_for('pets.add_pet') }}"
+                  class="inline-flex py-3 px-6 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl shadow-md shadow-primary/25 transition-all text-sm active:scale-95 hover:-translate-y-0.5"
+                >
+                    <i class="fa-solid fa-plus mr-1.5"></i> List a New Pet
+                </a>
+            {% else %}
+                <div class="flex flex-wrap gap-2.5">
+                    <a
+                      href="{{ url_for('admin.manage_pets') }}"
+                      class="py-2.5 px-5 bg-white border border-border/80 text-dark hover:border-primary hover:text-primary font-bold rounded-xl shadow-sm text-xs transition-all active:scale-95"
+                    >
+                        <i class="fa-solid fa-dog mr-1.5 text-primary"></i> Manage All Pets
+                    </a>
+                    <a
+                      href="{{ url_for('admin.manage_applications') }}"
+                      class="py-2.5 px-5 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl shadow-md shadow-primary/20 text-xs transition-all active:scale-95"
+                    >
+                        <i class="fa-solid fa-file-invoice mr-1.5"></i> Manage Applications
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if role == 'shelter' %}
+        <!-- ==================== SHELTER VIEW ==================== -->
+        <!-- Stats Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 animate-fade-in-up" style="animation-delay: 100ms;">
+            <!-- Listed Pets -->
+            <div class="bg-white border border-border/60 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-primary-light text-primary rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+                    <i class="fa-solid fa-paw"></i>
                 </div>
                 <div>
-                    {% if role == 'shelter' %}
-                        <a href="{{ url_for('pets.add_pet') }}" class="btn btn-primary-custom"><i class="fa-solid fa-plus me-2"></i> List a New Pet</a>
-                    {% else %}
-                        <div class="d-flex gap-2">
-                            <a href="{{ url_for('admin.manage_pets') }}" class="btn btn-outline-custom btn-sm"><i class="fa-solid fa-dog me-2"></i> Manage All Pets</a>
-                            <a href="{{ url_for('admin.manage_applications') }}" class="btn btn-primary-custom btn-sm"><i class="fa-solid fa-file-invoice me-2"></i> Manage All Applications</a>
-                        </div>
-                    {% endif %}
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Listed Pets</span>
+                    <strong class="text-2xl font-black text-dark leading-none block">{{ total_pets }}</strong>
+                </div>
+            </div>
+            <!-- Adopted Companions -->
+            <div class="bg-white border border-border/60 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+                    <i class="fa-solid fa-house-chimney-user"></i>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Adopted</span>
+                    <strong class="text-2xl font-black text-dark leading-none block">{{ adopted_pets }}</strong>
+                </div>
+            </div>
+            <!-- Pending Applications -->
+            <div class="bg-white border border-border/60 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Pending Review</span>
+                    <strong class="text-2xl font-black text-dark leading-none block">{{ pending_apps }}</strong>
                 </div>
             </div>
         </div>
 
-        {% if role == 'shelter' %}
-            <!-- SHELTER DASHBOARD -->
-            <!-- Stats Row -->
-            <div class="row g-4 mb-5">
-                <div class="col-md-4">
-                    <div class="dash-card d-flex align-items-center gap-3 border shadow-sm">
-                        <div class="dash-icon"><i class="fa-solid fa-paw"></i></div>
-                        <div>
-                            <span class="text-muted text-sm d-block">Listed Pets</span>
-                            <h3 class="fw-bold mb-0">{{ total_pets }}</h3>
-                        </div>
-                    </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-fade-in-up" style="animation-delay: 200ms;">
+            <!-- Left Panel: My Listed Pets Table -->
+            <div class="lg:col-span-7 bg-white border border-border/60 rounded-[32px] p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg font-black text-dark">My Listed Pets</h2>
                 </div>
-                <div class="col-md-4">
-                    <div class="dash-card d-flex align-items-center gap-3 border shadow-sm">
-                        <div class="dash-icon text-success"><i class="fa-solid fa-house-chimney-user"></i></div>
-                        <div>
-                            <span class="text-muted text-sm d-block">Adopted Companions</span>
-                            <h3 class="fw-bold mb-0">{{ adopted_pets }}</h3>
-                        </div>
+
+                {% if pets %}
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/70 border-b border-border/60">
+                                    <th class="py-3 px-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Pet</th>
+                                    <th class="py-3 px-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                                    <th class="py-3 px-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                {% for pet in pets %}
+                                    <tr class="hover:bg-slate-50/30 transition-colors">
+                                        <!-- Pet summary -->
+                                        <td class="py-4 px-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-lg overflow-hidden border border-border flex-shrink-0 bg-slate-50">
+                                                    {% if pet.photo %}
+                                                        <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" class="w-full h-full object-cover">
+                                                    {% else %}
+                                                        <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" class="w-full h-full object-cover">
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <h4 class="text-sm font-black text-dark">{{ pet.name }}</h4>
+                                                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{{ pet.species }}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <!-- Status -->
+                                        <td class="py-4 px-4">
+                                            {% if pet.is_adopted %}
+                                                <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md">Adopted</span>
+                                            {% else %}
+                                                <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md">Available</span>
+                                            {% endif %}
+                                        </td>
+                                        <!-- Actions -->
+                                        <td class="py-4 px-4 text-right">
+                                            <div class="flex justify-end items-center gap-1.5">
+                                                <a
+                                                  href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}"
+                                                  class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:text-primary hover:bg-primary-light flex items-center justify-center transition-colors"
+                                                  title="View details"
+                                                >
+                                                    <i class="fa-solid fa-eye text-xs"></i>
+                                                </a>
+                                                <a
+                                                  href="{{ url_for('pets.edit_pet', pet_id=pet.id) }}"
+                                                  class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 flex items-center justify-center transition-colors"
+                                                  title="Edit pet"
+                                                >
+                                                    <i class="fa-solid fa-pen text-xs"></i>
+                                                </a>
+                                                <form
+                                                  action="{{ url_for('pets.delete_pet', pet_id=pet.id) }}"
+                                                  method="POST"
+                                                  class="inline-block"
+                                                  onsubmit="return confirm('Are you sure you want to delete {{ pet.name }}?');"
+                                                >
+                                                    <button
+                                                      type="submit"
+                                                      class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors"
+                                                      title="Delete pet"
+                                                    >
+                                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="dash-card d-flex align-items-center gap-3 border shadow-sm">
-                        <div class="dash-icon text-warning"><i class="fa-solid fa-file-invoice"></i></div>
-                        <div>
-                            <span class="text-muted text-sm d-block">Pending Applications</span>
-                            <h3 class="fw-bold mb-0">{{ pending_apps }}</h3>
-                        </div>
+                {% else %}
+                    <!-- Empty State -->
+                    <div class="py-12 border border-dashed border-border rounded-[24px] text-center">
+                        <i class="fa-solid fa-dog text-3xl text-slate-300 mb-3 block"></i>
+                        <p class="text-sm text-slate-400 font-semibold mb-4">You haven't listed any pets yet.</p>
+                        <a
+                          href="{{ url_for('pets.add_pet') }}"
+                          class="inline-flex py-2.5 px-5 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl text-xs shadow-sm transition-all"
+                        >
+                            List a Pet
+                        </a>
                     </div>
-                </div>
+                {% endif %}
             </div>
 
-            <!-- Main Panels -->
-            <div class="row g-5">
-                <!-- Left: My Listings -->
-                <div class="col-lg-6">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="h4 fw-bold mb-0">My Listed Pets</h2>
-                    </div>
-                    {% if pets %}
-                        <div class="table-responsive rounded-4 border bg-white shadow-sm">
-                            <table class="table table-hover table-custom mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Pet Name</th>
-                                        <th>Status</th>
-                                        <th class="text-end">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for pet in pets %}
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <div style="width: 40px; height: 40px; overflow: hidden; border-radius: 6px;">
-                                                        {% if pet.photo %}
-                                                            <img src="{{ url_for('static', filename='uploads/pet_photos/' + pet.photo) }}" alt="{{ pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                        {% else %}
-                                                            <img src="{{ url_for('static', filename='uploads/pet_photos/default_pet.png') }}" alt="{{ pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                        {% endif %}
-                                                    </div>
-                                                    <div>
-                                                        <h5 class="h6 mb-0 fw-bold">{{ pet.name }}</h5>
-                                                        <span class="text-sm text-muted">{{ pet.species }}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                {% if pet.is_adopted %}
-                                                    <span class="badge-status badge-approved">Adopted</span>
-                                                {% else %}
-                                                    <span class="badge-status badge-pending">Available</span>
-                                                {% endif %}
-                                            </td>
-                                            <td class="text-end">
-                                                <div class="d-flex justify-content-end gap-2">
-                                                    <a href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-eye"></i></a>
-                                                    <a href="{{ url_for('pets.edit_pet', pet_id=pet.id) }}" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-pen"></i></a>
-                                                    <form action="{{ url_for('pets.delete_pet', pet_id=pet.id) }}" method="POST" class="confirm-delete-form d-inline-block" data-pet-name="{{ pet.name }}">
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="text-center py-5 bg-white border rounded-4">
-                            <i class="fa-solid fa-dog fa-2x text-muted mb-2"></i>
-                            <p class="text-muted">You haven't listed any pets yet.</p>
-                            <a href="{{ url_for('pets.add_pet') }}" class="btn btn-primary-custom btn-sm">List a Pet</a>
-                        </div>
-                    {% endif %}
-                </div>
+            <!-- Right Panel: Adoption Applications Review list -->
+            <div class="lg:col-span-5 flex flex-col gap-6">
+                <h2 class="text-lg font-black text-dark">Adoption Applications</h2>
 
-                <!-- Right: Adoption Applications -->
-                <div class="col-lg-6">
-                    <h2 class="h4 fw-bold mb-3">Adoption Applications</h2>
-                    {% if applications %}
-                        <div class="row g-3">
-                            {% for app in applications %}
-                                <div class="col-12">
-                                    <div class="card p-3 border rounded-4 shadow-sm">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h5 class="h6 mb-0 fw-bold">{{ app.full_name }}</h5>
-                                                <span class="text-sm text-muted">Applied to adopt <strong>{{ app.pet.name }}</strong></span>
-                                            </div>
-                                            <div>
-                                                {% if app.status == 'pending' %}
-                                                    <span class="badge-status badge-pending">Pending</span>
-                                                {% elif app.status == 'approved' %}
-                                                    <span class="badge-status badge-approved">Approved</span>
-                                                {% else %}
-                                                    <span class="badge-status badge-rejected">Rejected</span>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="text-sm text-muted bg-light p-2.5 rounded-3 mb-3" style="font-size: 0.9rem;">
-                                            <p class="mb-1"><strong>Phone:</strong> {{ app.phone }}</p>
-                                            <p class="mb-1"><strong>Address:</strong> {{ app.address }} ({{ app.home_type }})</p>
-                                            <p class="mb-1"><strong>Reason:</strong> "{{ app.reason }}"</p>
-                                            {% if app.previous_pet_experience %}
-                                                <p class="mb-0"><strong>Experience:</strong> "{{ app.previous_pet_experience }}"</p>
-                                            {% endif %}
-                                        </div>
-
-                                        {% if app.status == 'pending' and not app.pet.is_adopted %}
-                                            <div class="d-flex gap-2">
-                                                <form action="{{ url_for('admin.approve_application', application_id=app.id) }}" method="POST" class="flex-grow-1">
-                                                    <button type="submit" class="btn btn-success btn-sm w-100 py-1.5"><i class="fa-solid fa-check me-1"></i> Approve</button>
-                                                </form>
-                                                <form action="{{ url_for('admin.reject_application', application_id=app.id) }}" method="POST" class="flex-grow-1">
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100 py-1.5"><i class="fa-solid fa-xmark me-1"></i> Reject</button>
-                                                </form>
-                                            </div>
-                                        {% elif app.status == 'pending' and app.pet.is_adopted %}
-                                            <p class="text-danger text-sm mb-0">Pet is already adopted; please reject this application.</p>
-                                            <form action="{{ url_for('admin.reject_application', application_id=app.id) }}" method="POST" class="mt-2">
-                                                <button type="submit" class="btn btn-outline-danger btn-sm w-100"><i class="fa-solid fa-xmark me-1"></i> Close / Reject</button>
-                                            </form>
+                {% if applications %}
+                    <div class="space-y-4">
+                        {% for app in applications %}
+                            <div class="bg-white border border-border/60 rounded-[24px] p-5 shadow-sm flex flex-col gap-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="text-base font-black text-dark leading-snug">{{ app.full_name }}</h4>
+                                        <p class="text-xs text-slate-400 font-semibold leading-normal">
+                                            Applied to adopt <strong class="text-slate-500 font-bold">{{ app.pet.name }}</strong>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        {% if app.status == 'pending' %}
+                                            <span class="inline-flex text-[10px] font-bold px-2.5 py-0.5 bg-amber-50 text-amber-700 rounded-md">Pending</span>
+                                        {% elif app.status == 'approved' %}
+                                            <span class="inline-flex text-[10px] font-bold px-2.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-md">Approved</span>
+                                        {% else %}
+                                            <span class="inline-flex text-[10px] font-bold px-2.5 py-0.5 bg-red-50 text-red-700 rounded-md">Rejected</span>
                                         {% endif %}
                                     </div>
                                 </div>
-                            {% endfor %}
-                        </div>
+
+                                <!-- Applicant contact & notes block -->
+                                <div class="bg-slate-50/70 p-3.5 rounded-xl text-xs space-y-2 text-slate-500 font-semibold border border-slate-100">
+                                    <p class="flex items-center gap-1.5"><span class="text-slate-400 font-bold uppercase text-[9px] tracking-wider w-16 flex-shrink-0">Phone:</span> <span class="text-dark">{{ app.phone }}</span></p>
+                                    <p class="flex items-start gap-1.5"><span class="text-slate-400 font-bold uppercase text-[9px] tracking-wider w-16 flex-shrink-0 mt-0.5">Address:</span> <span class="text-dark">{{ app.address }} ({{ app.home_type }})</span></p>
+                                    <p class="flex items-start gap-1.5"><span class="text-slate-400 font-bold uppercase text-[9px] tracking-wider w-16 flex-shrink-0 mt-0.5">Reason:</span> <span class="text-dark leading-relaxed italic">"{{ app.reason }}"</span></p>
+                                    {% if app.previous_pet_experience %}
+                                        <p class="flex items-start gap-1.5"><span class="text-slate-400 font-bold uppercase text-[9px] tracking-wider w-16 flex-shrink-0 mt-0.5">Exp:</span> <span class="text-dark leading-relaxed italic">"{{ app.previous_pet_experience }}"</span></p>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Actions -->
+                                {% if app.status == 'pending' and not app.pet.is_adopted %}
+                                    <div class="flex gap-2 pt-1">
+                                        <form action="{{ url_for('admin.approve_application', application_id=app.id) }}" method="POST" class="flex-grow">
+                                            <button type="submit" class="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg text-xs transition-colors cursor-pointer">
+                                                <i class="fa-solid fa-check mr-1"></i> Approve
+                                            </button>
+                                        </form>
+                                        <form action="{{ url_for('admin.reject_application', application_id=app.id) }}" method="POST" class="flex-grow">
+                                            <button type="submit" class="w-full py-2 border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-lg text-xs transition-colors cursor-pointer">
+                                                <i class="fa-solid fa-xmark mr-1"></i> Reject
+                                            </button>
+                                        </form>
+                                    </div>
+                                {% elif app.status == 'pending' and app.pet.is_adopted %}
+                                    <div class="pt-1">
+                                        <p class="text-red-500 text-[10px] font-bold mb-2">Pet already adopted. Reject this application.</p>
+                                        <form action="{{ url_for('admin.reject_application', application_id=app.id) }}" method="POST">
+                                            <button type="submit" class="w-full py-2 border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-lg text-xs transition-colors cursor-pointer">
+                                                <i class="fa-solid fa-xmark mr-1"></i> Close / Reject
+                                            </button>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <!-- Empty State -->
+                    <div class="py-12 bg-white border border-border/60 rounded-[24px] text-center shadow-sm">
+                        <i class="fa-solid fa-file-invoice text-3xl text-slate-300 mb-2 block"></i>
+                        <p class="text-sm text-slate-400 font-semibold mb-0">No adoption applications received yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    {% elif role == 'admin' %}
+        <!-- ==================== ADMIN VIEW ==================== -->
+        <!-- Stats Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-fade-in-up" style="animation-delay: 100ms;">
+            <!-- Total Users -->
+            <div class="bg-white border border-border/60 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-primary-light text-primary rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Users</span>
+                    <strong class="text-2xl font-black text-dark leading-none block">{{ total_users }}</strong>
+                </div>
+            </div>
+            <!-- Total Pets -->
+            <div class="bg-white border border-border/60 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-sky-50 text-sky-500 rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+                    <i class="fa-solid fa-paw"></i>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Pets</span>
+                    <strong class="text-2xl font-black text-dark leading-none block">{{ total_pets }}</strong>
+                </div>
+            </div>
+            <!-- Applications -->
+            <div class="bg-white border border-border/60 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Applications</span>
+                    <strong class="text-2xl font-black text-dark leading-none block">{{ total_applications }}</strong>
+                </div>
+            </div>
+            <!-- Adopted Pets -->
+            <div class="bg-white border border-border/60 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+                    <i class="fa-solid fa-house-chimney-user"></i>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Adopted Pets</span>
+                    <strong class="text-2xl font-black text-dark leading-none block">{{ adopted_pets }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Control Columns -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up" style="animation-delay: 200ms;">
+            <!-- Column 1: Recent Users -->
+            <div class="flex flex-col gap-4">
+                <h2 class="text-sm font-black text-dark uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-users text-slate-400"></i> Recent Users
+                </h2>
+                <div class="bg-white border border-border/60 rounded-3xl shadow-sm overflow-hidden divide-y divide-slate-100">
+                    {% if latest_users %}
+                        {% for user in latest_users %}
+                            <div class="p-4 flex justify-between items-center gap-3">
+                                <div class="truncate">
+                                    <h4 class="text-sm font-black text-dark truncate">{{ user.name }}</h4>
+                                    <p class="text-xs text-slate-400 truncate">{{ user.email }}</p>
+                                </div>
+                                <span class="inline-flex text-[9px] font-bold px-2 py-0.5 bg-slate-100 border border-slate-200 text-slate-600 rounded">
+                                    {{ user.role | capitalize }}
+                                </span>
+                            </div>
+                        {% endfor %}
                     {% else %}
-                        <div class="text-center py-5 bg-white border rounded-4">
-                            <i class="fa-solid fa-file-invoice fa-2x text-muted mb-2"></i>
-                            <p class="text-muted">No adoption applications received yet.</p>
-                        </div>
+                        <div class="p-6 text-center text-slate-400 text-sm">No users found.</div>
                     {% endif %}
                 </div>
             </div>
 
-        {% elif role == 'admin' %}
-            <!-- ADMIN DASHBOARD -->
-            <!-- Stats Row -->
-            <div class="row g-4 mb-5">
-                <div class="col-md-3">
-                    <div class="dash-card d-flex align-items-center gap-3 border shadow-sm">
-                        <div class="dash-icon"><i class="fa-solid fa-users text-primary"></i></div>
-                        <div>
-                            <span class="text-muted text-sm d-block">Total Users</span>
-                            <h3 class="fw-bold mb-0">{{ total_users }}</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="dash-card d-flex align-items-center gap-3 border shadow-sm">
-                        <div class="dash-icon"><i class="fa-solid fa-paw text-info"></i></div>
-                        <div>
-                            <span class="text-muted text-sm d-block">Total Pets</span>
-                            <h3 class="fw-bold mb-0">{{ total_pets }}</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="dash-card d-flex align-items-center gap-3 border shadow-sm">
-                        <div class="dash-icon"><i class="fa-solid fa-file-invoice text-warning"></i></div>
-                        <div>
-                            <span class="text-muted text-sm d-block">Applications</span>
-                            <h3 class="fw-bold mb-0">{{ total_applications }}</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="dash-card d-flex align-items-center gap-3 border shadow-sm">
-                        <div class="dash-icon"><i class="fa-solid fa-house-chimney-user text-success"></i></div>
-                        <div>
-                            <span class="text-muted text-sm d-block">Adopted Pets</span>
-                            <h3 class="fw-bold mb-0">{{ adopted_pets }}</h3>
-                        </div>
-                    </div>
+            <!-- Column 2: Recent Pets -->
+            <div class="flex flex-col gap-4">
+                <h2 class="text-sm font-black text-dark uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-paw text-slate-400"></i> Recent Pets
+                </h2>
+                <div class="bg-white border border-border/60 rounded-3xl shadow-sm overflow-hidden divide-y divide-slate-100">
+                    {% if latest_pets %}
+                        {% for pet in latest_pets %}
+                            <a
+                              href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}"
+                              class="p-4 flex justify-between items-center gap-3 hover:bg-slate-50/50 transition-colors block"
+                            >
+                                <div class="truncate">
+                                    <h4 class="text-sm font-black text-dark truncate">{{ pet.name }}</h4>
+                                    <p class="text-xs text-slate-400 truncate">Breed: {% if pet.breed %}{{ pet.breed }}{% else %}Mixed{% endif %}</p>
+                                </div>
+                                <div>
+                                    {% if pet.is_adopted %}
+                                        <span class="inline-flex text-[9px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded">Adopted</span>
+                                    {% else %}
+                                        <span class="inline-flex text-[9px] font-bold px-2 py-0.5 bg-amber-50 text-amber-700 rounded">Available</span>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <div class="p-6 text-center text-slate-400 text-sm">No pets found.</div>
+                    {% endif %}
                 </div>
             </div>
 
-            <div class="row g-4">
-                <!-- Column: Latest Users -->
-                <div class="col-lg-4 col-md-6">
-                    <h2 class="h5 fw-bold mb-3"><i class="fa-solid fa-users text-muted me-2"></i> Recent Users</h2>
-                    <div class="list-group rounded-4 border shadow-sm bg-white overflow-hidden">
-                        {% if latest_users %}
-                            {% for user in latest_users %}
-                                <div class="list-group-item p-3 border-start-0 border-end-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-0 fw-bold">{{ user.name }}</h6>
-                                            <span class="text-sm text-muted">{{ user.email }}</span>
-                                        </div>
-                                        <span class="badge bg-light text-dark border">{{ user.role | capitalize }}</span>
-                                    </div>
+            <!-- Column 3: Recent Applications -->
+            <div class="flex flex-col gap-4">
+                <h2 class="text-sm font-black text-dark uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-file-invoice text-slate-400"></i> Recent Applications
+                </h2>
+                <div class="bg-white border border-border/60 rounded-3xl shadow-sm overflow-hidden divide-y divide-slate-100">
+                    {% if latest_applications %}
+                        {% for app in latest_applications %}
+                            <div class="p-4 flex justify-between items-center gap-3">
+                                <div class="truncate">
+                                    <h4 class="text-sm font-black text-dark truncate">{{ app.full_name }}</h4>
+                                    <p class="text-xs text-slate-400 truncate">To adopt <strong class="font-bold text-slate-500">{{ app.pet.name }}</strong></p>
                                 </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="p-3 text-center text-muted">No users found.</div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Column: Latest Pets -->
-                <div class="col-lg-4 col-md-6">
-                    <h2 class="h5 fw-bold mb-3"><i class="fa-solid fa-paw text-muted me-2"></i> Recent Pets</h2>
-                    <div class="list-group rounded-4 border shadow-sm bg-white overflow-hidden">
-                        {% if latest_pets %}
-                            {% for pet in latest_pets %}
-                                <a href="{{ url_for('pets.pet_detail', pet_id=pet.id) }}" class="list-group-item list-group-item-action p-3 border-start-0 border-end-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-0 fw-bold">{{ pet.name }}</h6>
-                                            <span class="text-sm text-muted">Breed: {% if pet.breed %}{{ pet.breed }}{% else %}Mixed{% endif %}</span>
-                                        </div>
-                                        <div>
-                                            {% if pet.is_adopted %}
-                                                <span class="badge bg-success rounded-pill">Adopted</span>
-                                            {% else %}
-                                                <span class="badge bg-warning text-dark rounded-pill">Available</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </a>
-                            {% endfor %}
-                        {% else %}
-                            <div class="p-3 text-center text-muted">No pets found.</div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Column: Latest Applications -->
-                <div class="col-lg-4 col-md-12">
-                    <h2 class="h5 fw-bold mb-3"><i class="fa-solid fa-file-invoice text-muted me-2"></i> Recent Applications</h2>
-                    <div class="list-group rounded-4 border shadow-sm bg-white overflow-hidden">
-                        {% if latest_applications %}
-                            {% for app in latest_applications %}
-                                <div class="list-group-item p-3 border-start-0 border-end-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-0 fw-bold">{{ app.full_name }}</h6>
-                                            <span class="text-sm text-muted">Applied to adopt <strong>{{ app.pet.name }}</strong></span>
-                                        </div>
-                                        <span class="badge-status {% if app.status == 'pending' %}badge-pending{% elif app.status == 'approved' %}badge-approved{% else %}badge-rejected{% endif %}">
-                                            {{ app.status | capitalize }}
-                                        </span>
-                                    </div>
+                                <div>
+                                    {% if app.status == 'pending' %}
+                                        <span class="inline-flex text-[9px] font-bold px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/50 rounded">Pending</span>
+                                    {% elif app.status == 'approved' %}
+                                        <span class="inline-flex text-[9px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/50 rounded">Approved</span>
+                                    {% else %}
+                                        <span class="inline-flex text-[9px] font-bold px-2 py-0.5 bg-red-50 text-red-700 border border-red-200/50 rounded">Rejected</span>
+                                    {% endif %}
                                 </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="p-3 text-center text-muted">No applications found.</div>
-                        {% endif %}
-                    </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="p-6 text-center text-slate-400 text-sm">No applications found.</div>
+                    {% endif %}
                 </div>
             </div>
-        {% endif %}
-    </div>
-</section>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
