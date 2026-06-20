@@ -119,3 +119,50 @@ def reject_application(application_id):
     
     flash(f'Application for {pet.name} was rejected.', 'warning')
     return redirect(request.referrer or url_for('admin.dashboard'))
+
+
+@admin_bp.route('/admin/manage-users')
+@login_required
+@role_required('admin')
+def manage_users():
+    users = User.query.order_by(User.created_at.desc()).all()
+    return render_template('admin/manage_users.html', users=users)
+
+
+@admin_bp.route('/admin/user/<int:user_id>/edit', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if request.method == 'POST':
+        user.name = request.form.get('name', '').strip()
+        user.email = request.form.get('email', '').strip()
+        user.phone = request.form.get('phone', '').strip()
+        user.city = request.form.get('city', '').strip()
+        user.role = request.form.get('role', 'adopter')
+        
+        if not user.name or not user.email:
+            flash('Name and Email are required!', 'danger')
+            return render_template('admin/edit_user.html', user=user)
+            
+        db.session.commit()
+        flash(f'User {user.name} has been updated successfully!', 'success')
+        return redirect(url_for('admin.manage_users'))
+        
+    return render_template('admin/edit_user.html', user=user)
+
+
+@admin_bp.route('/admin/user/<int:user_id>/delete', methods=['POST'])
+@login_required
+@role_required('admin')
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if user.id == current_user.id:
+        flash('You cannot delete your own admin account!', 'danger')
+        return redirect(url_for('admin.manage_users'))
+        
+    db.session.delete(user)
+    db.session.commit()
+    flash(f'User {user.name} has been deleted successfully.', 'success')
+    return redirect(url_for('admin.manage_users'))
+

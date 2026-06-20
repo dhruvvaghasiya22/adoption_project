@@ -41,6 +41,14 @@ def apply(pet_id):
         db.session.add(new_app)
         db.session.commit()
         
+        # Send confirmation email to adopter and notification email to admin
+        from mail import send_adoption_emails
+        send_adoption_emails(
+            user_name=current_user.name,
+            user_email=current_user.email,
+            pet_name=pet.name
+        )
+        
         flash(f'Your adoption application for {pet.name} has been submitted successfully!', 'success')
         return redirect(url_for('adoptions.my_applications'))
         

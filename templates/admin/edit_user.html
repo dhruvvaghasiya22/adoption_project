@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit User: {{ user.name }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto max-w-2xl px-6 py-12 text-left animate-fade-in-up">
+    <!-- Breadcrumbs & Header -->
+    <nav class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+        <a href="{{ url_for('general.home') }}" class="hover:text-primary transition-colors">Home</a>
+        <span>/</span>
+        <a href="{{ url_for('admin.dashboard') }}" class="hover:text-primary transition-colors">Dashboard</a>
+        <span>/</span>
+        <a href="{{ url_for('admin.manage_users') }}" class="hover:text-primary transition-colors">Manage Users</a>
+        <span>/</span>
+        <span class="text-slate-500">Edit User</span>
+    </nav>
+    
+    <h1 class="text-3xl font-black text-dark mb-2">Edit User Profile</h1>
+    <p class="text-slate-500 text-sm mb-8">Update profile information or assign access privileges for {{ user.name }}.</p>
+
+    <!-- Form Card -->
+    <div class="bg-white border border-border/60 rounded-[32px] p-8 shadow-sm">
+        <form action="{{ url_for('admin.edit_user', user_id=user.id) }}" method="POST" class="space-y-6">
+            <!-- Name -->
+            <div>
+                <label for="name" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Full Name</label>
+                <div class="relative">
+                    <input 
+                      type="text" 
+                      id="name" 
+                      name="name" 
+                      value="{{ user.name }}" 
+                      required
+                      class="w-full bg-[#FFF8F1] border border-border/80 rounded-2xl px-4 py-3.5 outline-none font-medium text-sm text-dark placeholder:text-slate-400 focus:border-primary/50 transition-all"
+                    />
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Email Address</label>
+                <div class="relative">
+                    <input 
+                      type="email" 
+                      id="email" 
+                      name="email" 
+                      value="{{ user.email }}" 
+                      required
+                      class="w-full bg-[#FFF8F1] border border-border/80 rounded-2xl px-4 py-3.5 outline-none font-medium text-sm text-dark placeholder:text-slate-400 focus:border-primary/50 transition-all"
+                    />
+                </div>
+            </div>
+
+            <!-- Phone -->
+            <div>
+                <label for="phone" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Phone Number</label>
+                <div class="relative">
+                    <input 
+                      type="text" 
+                      id="phone" 
+                      name="phone" 
+                      value="{% if user.phone %}{{ user.phone }}{% endif %}" 
+                      placeholder="e.g. 555-019-2834"
+                      class="w-full bg-[#FFF8F1] border border-border/80 rounded-2xl px-4 py-3.5 outline-none font-medium text-sm text-dark placeholder:text-slate-400 focus:border-primary/50 transition-all"
+                    />
+                </div>
+            </div>
+
+            <!-- City -->
+            <div>
+                <label for="city" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">City</label>
+                <div class="relative">
+                    <input 
+                      type="text" 
+                      id="city" 
+                      name="city" 
+                      value="{% if user.city %}{{ user.city }}{% endif %}" 
+                      placeholder="e.g. San Francisco"
+                      class="w-full bg-[#FFF8F1] border border-border/80 rounded-2xl px-4 py-3.5 outline-none font-medium text-sm text-dark placeholder:text-slate-400 focus:border-primary/50 transition-all"
+                    />
+                </div>
+            </div>
+
+            <!-- Role Select -->
+            <div>
+                <label for="role" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">User Role</label>
+                <select 
+                  id="role" 
+                  name="role" 
+                  class="w-full bg-[#FFF8F1] border border-border/80 rounded-2xl px-4 py-3.5 outline-none font-medium text-sm text-dark focus:border-primary/50 transition-all appearance-none cursor-pointer"
+                >
+                    <option value="adopter" {% if user.role == 'adopter' %}selected{% endif %}>Adopter</option>
+                    <option value="shelter" {% if user.role == 'shelter' %}selected{% endif %}>Shelter Partner</option>
+                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrator</option>
+                </select>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-border/40">
+                <a 
+                  href="{{ url_for('admin.manage_users') }}" 
+                  class="px-5 py-3 border border-border/80 text-dark hover:border-slate-400 font-bold rounded-xl text-xs transition-colors"
+                >
+                    Cancel
+                </a>
+                <button 
+                  type="submit" 
+                  class="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl text-xs shadow-md shadow-primary/20 transition-all active:scale-95 cursor-pointer"
+                >
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

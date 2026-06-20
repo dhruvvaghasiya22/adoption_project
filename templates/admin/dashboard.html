@@ -26,6 +26,12 @@
             {% else %}
                 <div class="flex flex-wrap gap-2.5">
                     <a
+                      href="{{ url_for('admin.manage_users') }}"
+                      class="py-2.5 px-5 bg-white border border-[#FFD166]/80 text-dark hover:border-[#FFD166] hover:bg-amber-50/20 font-bold rounded-xl shadow-sm text-xs transition-all active:scale-95"
+                    >
+                        <i class="fa-solid fa-users mr-1.5 text-amber-500"></i> Manage Users
+                    </a>
+                    <a
                       href="{{ url_for('admin.manage_pets') }}"
                       class="py-2.5 px-5 bg-white border border-border/80 text-dark hover:border-primary hover:text-primary font-bold rounded-xl shadow-sm text-xs transition-all active:scale-95"
                     >
