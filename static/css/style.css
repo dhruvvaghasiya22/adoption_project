@@ -229,3 +229,25 @@
   }
 }
 
+/* Background Scrolling Paw Prints Trail */
+.paw-print {
+  position: absolute;
+  pointer-events: none;
+  z-index: 25; /* overlay section backgrounds so they are visible */
+  color: #FF6B5A; /* Solid primary theme color */
+  font-size: 28px; /* Slightly larger and more visible */
+  transform-origin: center;
+  animation: fade-in-paw 5s forwards ease-out;
+  will-change: transform, opacity;
+}
+
+@keyframes fade-in-paw {
+  0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+  10% { opacity: 0.55; transform: scale(1); } /* Clear and visible opacity */
+  80% { opacity: 0.45; }
+  100% { opacity: 0; transform: scale(0.8); }
+}
+
+
+
+

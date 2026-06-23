@@ -3,105 +3,395 @@
 {% block title %}About Us{% endblock %}
 
 {% block content %}
-<!-- About Hero/Mission Section -->
-<section class="py-16 md:py-24 bg-gradient-to-br from-[#ffece4]/40 via-[#fffbf9] to-[#fffbf9] px-6 md:px-12 relative overflow-hidden">
-    <div class="absolute top-[-100px] right-[-100px] w-[300px] h-[300px] rounded-full bg-[#ffc857]/10 blur-[80px] pointer-events-none"></div>
-    <div class="absolute bottom-[-50px] left-[-50px] w-[250px] h-[250px] rounded-full bg-[#ff7e67]/5 blur-[70px] pointer-events-none"></div>
+<div class="relative w-full overflow-hidden" id="about-content-wrapper">
 
-    <div class="container mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        <!-- Text details -->
-        <div class="lg:col-span-7 flex flex-col items-start text-left z-10 animate-fade-in-up">
-            <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-light text-primary rounded-full text-sm font-bold mb-6">
-                <i class="fa-solid fa-paw"></i> Our Mission
-            </span>
-            <h1 class="text-4xl md:text-5xl font-black text-dark leading-[1.1] mb-6">
-                Connecting <span class="text-gradient">Hearts &amp; Paws</span>
-            </h1>
-            <p class="text-lg text-slate-500 max-w-xl leading-relaxed mb-6">
-                We believe that every animal deserves a loving, stable, and safe forever home. Our platform bridges the gap between rescue shelters and hopeful pet adopters.
-            </p>
-            <p class="text-base text-slate-400 max-w-xl leading-relaxed mb-8">
-                Founded in 2026, PetAdopt simplifies the adoption lifecycle. By providing shelters with a portal to list animals and handle adoptions, and giving users a direct application workflow, we increase successful matches and help empty animal shelters.
-            </p>
-            
-            <!-- Features checkmarks -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl">
-                <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-border/40 shadow-sm">
-                    <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500">
-                        <i class="fa-solid fa-circle-check"></i>
+    <!-- About Hero/Mission Section -->
+    <section class="py-16 md:py-24 bg-gradient-to-br from-[#ffece4]/40 via-[#fffbf9] to-[#fffbf9] px-6 md:px-12 relative overflow-hidden">
+        <!-- Background decorative vectors -->
+        <div class="absolute top-[-100px] right-[-100px] w-[300px] h-[300px] rounded-full bg-[#ffc857]/10 blur-[80px] pointer-events-none"></div>
+        <div class="absolute bottom-[-50px] left-[-50px] w-[250px] h-[250px] rounded-full bg-[#ff7e67]/5 blur-[70px] pointer-events-none"></div>
+        <!-- Subtle background footprint trail watermark -->
+        <div class="absolute top-1/3 left-10 text-slate-100/50 text-7xl rotate-12 pointer-events-none hidden lg:block">
+            <i class="fa-solid fa-paw opacity-5"></i>
+        </div>
+
+        <div class="container mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <!-- Text details -->
+            <div class="lg:col-span-7 flex flex-col items-start text-left z-10 animate-fade-in-up">
+                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#ffece4] text-primary rounded-full text-xs font-black mb-6">
+                    <i class="fa-solid fa-paw"></i> Our Mission
+                </span>
+                
+                <h1 class="text-4xl md:text-[54px] font-black text-[#2D2D2D] leading-[1.1] mb-6 flex flex-col items-start">
+                    <span>Connecting</span>
+                    <span class="text-primary flex items-center flex-wrap gap-2">
+                        Hearts &amp; Paws
+                        <!-- SVG heart trail line -->
+                        <svg class="w-24 h-12 text-primary/80 hidden sm:inline-block" viewBox="0 0 100 50" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                            <path d="M10 35 C 20 15, 35 15, 45 30 C 55 45, 70 45, 80 30 C 85 20, 92 20, 96 26" />
+                            <circle cx="97" cy="26" r="2" fill="currentColor" />
+                            <circle cx="94" cy="22" r="1.5" fill="currentColor" />
+                            <circle cx="100" cy="22" r="1.5" fill="currentColor" />
+                        </svg>
+                    </span>
+                </h1>
+                
+                <p class="text-base text-slate-500 max-w-xl leading-relaxed mb-4">
+                    We believe that every animal deserves a loving, stable, and safe forever home. Our platform bridges the gap between rescue shelters and hopeful pet adopters.
+                </p>
+                <p class="text-sm text-slate-400 max-w-xl leading-relaxed mb-8">
+                    Founded in 2020, <strong class="text-primary font-bold">Pawdopt</strong> simplifies the adoption lifecycle. By providing shelters with a portal to list animals and handle adoptions, and giving users a direct application workflow, we increase successful matches and help empty animal shelters.
+                </p>
+                
+                <!-- Features checkmarks styled as neat grid cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl">
+                    <div class="flex items-center gap-3 bg-white px-5 py-4 rounded-2xl border border-border/40 shadow-sm">
+                        <div class="w-6 h-6 rounded-full bg-[#e8f5e9] text-[#2e7d32] flex items-center justify-center text-xs flex-shrink-0">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <span class="font-extrabold text-dark text-sm">Verified Shelters</span>
                     </div>
-                    <span class="font-bold text-dark text-sm">Verified Shelters</span>
+                    <div class="flex items-center gap-3 bg-white px-5 py-4 rounded-2xl border border-border/40 shadow-sm">
+                        <div class="w-6 h-6 rounded-full bg-[#e8f5e9] text-[#2e7d32] flex items-center justify-center text-xs flex-shrink-0">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <span class="font-extrabold text-dark text-sm">100% Free Adoption Listing</span>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white px-5 py-4 rounded-2xl border border-border/40 shadow-sm">
+                        <div class="w-6 h-6 rounded-full bg-[#e8f5e9] text-[#2e7d32] flex items-center justify-center text-xs flex-shrink-0">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <span class="font-extrabold text-dark text-sm">Secure Applications</span>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white px-5 py-4 rounded-2xl border border-border/40 shadow-sm">
+                        <div class="w-6 h-6 rounded-full bg-[#e8f5e9] text-[#2e7d32] flex items-center justify-center text-xs flex-shrink-0">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <span class="font-extrabold text-dark text-sm">Post-Adoption Guides</span>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-border/40 shadow-sm">
-                    <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <span class="font-bold text-dark text-sm">100% Free Adoption Listing</span>
+            </div>
+
+            <!-- Banner image with overlays (matches the layout pattern from reference image) -->
+            <div class="lg:col-span-5 flex justify-center items-center z-10 relative mt-8 lg:mt-0">
+                <!-- Main styled image wrapper -->
+                <div class="relative w-full max-w-sm aspect-square rounded-[48px] bg-[#0081a7] overflow-hidden border-8 border-white shadow-2xl flex items-end justify-center">
+                    <img
+                      src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=600&h=600"
+                      alt="Happy dog wearing a yellow sweater"
+                      class="w-full h-full object-cover scale-110 object-bottom"
+                    />
+                    
+                    <!-- SVG Wavy Arrow inside blue container -->
+                    <svg class="absolute bottom-6 left-12 w-20 h-10 text-[#ffb703]/40 transform -rotate-12" viewBox="0 0 100 50" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <path d="M10,40 Q35,35 55,15 T85,20" />
+                        <polygon points="85,20 77,15 80,25" fill="currentColor"/>
+                    </svg>
                 </div>
-                <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-border/40 shadow-sm">
-                    <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500">
-                        <i class="fa-solid fa-circle-check"></i>
+
+                <!-- Floating Badge 1: Top-Left Heart Circle -->
+                <div class="absolute top-[-20px] left-[-10px] w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center border-4 border-white z-20">
+                    <div class="w-12 h-12 rounded-full bg-[#ffece4] flex items-center justify-center text-[#ff6b5a] text-lg">
+                        <i class="fa-solid fa-heart"></i>
                     </div>
-                    <span class="font-bold text-dark text-sm">Secure Applications</span>
                 </div>
-                <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-border/40 shadow-sm">
-                    <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500">
-                        <i class="fa-solid fa-circle-check"></i>
+                
+                <!-- Floating Badge 2: Right side text banner card -->
+                <div class="absolute right-[-25px] top-[40%] bg-white border border-[#f3e8dd]/60 rounded-2xl p-4 shadow-xl flex items-center gap-3 max-w-[220px] z-20 hover:scale-105 transition-transform duration-300">
+                    <!-- Dog avatar circle -->
+                    <div class="w-10 h-10 rounded-full overflow-hidden bg-primary-light border border-primary-light flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=80&h=80" class="w-full h-full object-cover"/>
                     </div>
-                    <span class="font-bold text-dark text-sm">Post-Adoption Guides</span>
+                    <div>
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Every adoption</div>
+                        <div class="text-xs font-black text-primary leading-tight">changes a life <span class="text-orange-400 text-[10px]">+</span></div>
+                    </div>
+                </div>
+
+                <!-- Floating Badge 3: Bottom-Right Paw Circle -->
+                <div class="absolute bottom-[-15px] right-[10%] w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center border-4 border-white z-20">
+                    <div class="w-12 h-12 rounded-full bg-[#ffece4] flex items-center justify-center text-[#ff6b5a] text-lg">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Banner image -->
-        <div class="lg:col-span-5 flex justify-center items-center z-10">
-            <div class="relative w-full max-w-md aspect-[6/5] rounded-[32px] overflow-hidden border-4 border-white shadow-2xl">
-                <img
-                  src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=600&h=500"
-                  alt="Happy dog with tongue out"
-                  class="w-full h-full object-cover"
-                />
+    <!-- Platform Impact / Statistics Section -->
+    <section class="py-16 bg-white border-t border-[#f1e3d3]/40 px-6 md:px-12">
+        <div class="container mx-auto max-w-7xl">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                <div class="bg-[#FFF8F1] border border-border/50 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-primary-light text-primary rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
+                        <i class="fa-solid fa-house-chimney-window"></i>
+                    </div>
+                    <div class="text-3xl md:text-4xl font-black text-dark mb-1">5,000+</div>
+                    <div class="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-wider">Pets Adopted</div>
+                </div>
+                <div class="bg-[#FFF8F1] border border-border/50 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
+                        <i class="fa-solid fa-shield-dog"></i>
+                    </div>
+                    <div class="text-3xl md:text-4xl font-black text-dark mb-1">120+</div>
+                    <div class="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-wider">Partner Shelters</div>
+                </div>
+                <div class="bg-[#FFF8F1] border border-border/50 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
+                        <i class="fa-solid fa-heart-circle-check"></i>
+                    </div>
+                    <div class="text-3xl md:text-4xl font-black text-dark mb-1">98%</div>
+                    <div class="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-wider">Happy Match Rate</div>
+                </div>
+                <div class="bg-[#FFF8F1] border border-border/50 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-sky-50 text-sky-500 rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
+                        <i class="fa-solid fa-hands-holding-child"></i>
+                    </div>
+                    <div class="text-3xl md:text-4xl font-black text-dark mb-1">1,500+</div>
+                    <div class="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-wider">Active Volunteers</div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Values Section -->
-<section class="py-20 bg-white px-6 md:px-12 border-t border-[#f1e3d3]/40">
-    <div class="container mx-auto max-w-7xl">
-        <div class="flex flex-col items-center text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-black text-dark mb-3">Our Core Values</h2>
-            <p class="text-slate-500 text-base max-w-lg">The principles guiding our work every day.</p>
+    <!-- Our Journey (Timeline) Section -->
+    <section class="py-20 bg-gradient-to-tr from-[#fffbf9] to-[#ffece4]/20 px-6 md:px-12 border-t border-[#f1e3d3]/40">
+        <div class="container mx-auto max-w-5xl">
+            <div class="flex flex-col items-center text-center mb-16">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-xs font-extrabold mb-3 uppercase tracking-wider">
+                    Our Story
+                </span>
+                <h2 class="text-3xl md:text-4xl font-black text-dark mb-3">How We Started</h2>
+                <p class="text-slate-500 text-base max-w-lg">The story of how one simple idea turned into a thriving pet safety network.</p>
+            </div>
+
+            <div class="relative border-l-2 border-primary/20 ml-4 md:ml-32 py-4">
+                <div class="mb-12 ml-6 md:ml-12 relative">
+                    <div class="absolute -left-[31px] md:-left-[55px] top-1.5 w-6 h-6 rounded-full bg-primary border-4 border-white shadow flex items-center justify-center z-10"></div>
+                    <div class="absolute right-full mr-8 top-1.5 hidden md:block text-right">
+                        <span class="text-2xl font-black text-primary">2026</span>
+                    </div>
+                    <div class="bg-white border border-border/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow max-w-2xl">
+                        <span class="text-lg font-black text-primary md:hidden block mb-1">2026</span>
+                        <h4 class="text-xl font-bold text-dark mb-2">The Spark of PetAdopt</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed">
+                            PetAdopt was established in 2026. The initial goal was basic: help regional rescue centers post digital animal listings so local animal advocates could adopt more efficiently.
+                        </p>
+                    </div>
+                </div>
+                <div class="mb-12 ml-6 md:ml-12 relative">
+                    <div class="absolute -left-[31px] md:-left-[55px] top-1.5 w-6 h-6 rounded-full bg-secondary border-4 border-white shadow flex items-center justify-center z-10"></div>
+                    <div class="absolute right-full mr-8 top-1.5 hidden md:block text-right">
+                        <span class="text-2xl font-black text-secondary">2027</span>
+                    </div>
+                    <div class="bg-white border border-border/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow max-w-2xl">
+                        <span class="text-lg font-black text-secondary md:hidden block mb-1">2027</span>
+                        <h4 class="text-xl font-bold text-dark mb-2">Growing Our Pack</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed">
+                            We partnered with 50+ shelters across multiple states. We released the official dashboard portal, letting rescue operators track applications, store health files, and host remote interviews.
+                        </p>
+                    </div>
+                </div>
+                <div class="ml-6 md:ml-12 relative">
+                    <div class="absolute -left-[31px] md:-left-[55px] top-1.5 w-6 h-6 rounded-full bg-emerald-500 border-4 border-white shadow flex items-center justify-center z-10"></div>
+                    <div class="absolute right-full mr-8 top-1.5 hidden md:block text-right">
+                        <span class="text-2xl font-black text-emerald-500">2028</span>
+                    </div>
+                    <div class="bg-white border border-border/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow max-w-2xl">
+                        <span class="text-lg font-black text-emerald-500 md:hidden block mb-1">2028</span>
+                        <h4 class="text-xl font-bold text-dark mb-2">Nationwide Connection</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed">
+                            Introducing advanced matching filters and pet guide libraries. We are proud to connect thousands of loving owners with their permanent animal companions every single day.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Compassion First -->
-            <div class="group bg-lightBg border border-border/40 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all duration-300 transform hover:-translate-y-2">
-                <div class="w-14 h-14 bg-white border border-border/55 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-primary group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-heart text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-black text-dark mb-3">Compassion First</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-0">Every feature we construct is centered around animal welfare and ensuring the security and happiness of every companion.</p>
+    <!-- Adoption Guide Section -->
+    <section class="py-20 bg-white px-6 md:px-12 border-t border-[#f1e3d3]/40">
+        <div class="container mx-auto max-w-7xl">
+            <div class="flex flex-col items-center text-center mb-16">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-extrabold mb-3 uppercase tracking-wider">
+                    How it works
+                </span>
+                <h2 class="text-3xl md:text-4xl font-black text-dark mb-3">Simple Steps to Adopt</h2>
+                <p class="text-slate-500 text-base max-w-lg">Our streamlined procedure keeps adoptions clean, safe, and stress-free.</p>
             </div>
 
-            <!-- Community Collaboration -->
-            <div class="group bg-lightBg border border-border/40 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all duration-300 transform hover:-translate-y-2">
-                <div class="w-14 h-14 bg-white border border-border/55 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-secondary group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-people-group text-2xl"></i>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-primary-light text-primary flex items-center justify-center text-2xl font-black shadow-sm mb-6 relative">
+                        1
+                        <div class="hidden md:block absolute left-full top-1/2 w-full h-[2px] bg-slate-100 -z-10"></div>
+                    </div>
+                    <h3 class="text-lg font-bold text-dark mb-2">Search & Match</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Browse verified pet profiles to discover dogs, cats, or rabbits matching your lifestyle needs.</p>
                 </div>
-                <h3 class="text-xl font-black text-dark mb-3">Community Collaboration</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-0">We work closely with local shelters, veterinary offices, and animal advocates to build a cooperative pet safety network.</p>
-            </div>
-
-            <!-- Responsible Placement -->
-            <div class="group bg-lightBg border border-border/40 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all duration-300 transform hover:-translate-y-2">
-                <div class="w-14 h-14 bg-white border border-border/55 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-emerald-400 group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-compass text-2xl"></i>
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-2xl font-black shadow-sm mb-6 relative">
+                        2
+                        <div class="hidden md:block absolute left-full top-1/2 w-full h-[2px] bg-slate-100 -z-10"></div>
+                    </div>
+                    <h3 class="text-lg font-bold text-dark mb-2">Submit Application</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Complete our standard secure questionnaire details online in a matter of minutes.</p>
                 </div>
-                <h3 class="text-xl font-black text-dark mb-3">Responsible Placement</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-0">We provide screening forms to make sure every pet is placed in a environment suited to their physiological and behavioral needs.</p>
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl font-black shadow-sm mb-6 relative">
+                        3
+                        <div class="hidden md:block absolute left-full top-1/2 w-full h-[2px] bg-slate-100 -z-10"></div>
+                    </div>
+                    <h3 class="text-lg font-bold text-dark mb-2">Meet & Greet</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Schedule a walk or virtual session to bond and check compatibility with the animal.</p>
+                </div>
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center text-2xl font-black shadow-sm mb-6">
+                        4
+                    </div>
+                    <h3 class="text-lg font-bold text-dark mb-2">Welcome Home!</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Sign transition contracts, pack some toys, and begin building a beautiful life together.</p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+    <!-- Values Section (Matches the high fidelity style requested by user) -->
+    <section class="py-20 bg-[#fffbf9]/80 px-6 md:px-12 border-t border-[#f1e3d3]/40 relative">
+        <!-- Background paw watermark -->
+        <div class="absolute bottom-6 right-10 text-slate-100/50 text-7xl -rotate-12 pointer-events-none hidden lg:block">
+            <i class="fa-solid fa-paw opacity-5"></i>
+        </div>
+        
+        <div class="container mx-auto max-w-7xl">
+            <div class="flex flex-col items-center text-center mb-16">
+                <span class="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ffece4] text-primary rounded-full text-xs font-bold mb-4">
+                    ❤️ Our Core Values
+                </span>
+                <h2 class="text-3xl md:text-[38px] font-black text-dark mb-3">Our Core Values</h2>
+                <p class="text-slate-500 text-sm max-w-lg">The principles guiding our work every day.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Compassion -->
+                <div class="bg-white border border-[#f3e8dd]/60 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-500/15 transition-all duration-300 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-[#e8f5e9] border border-[#c8e6c9] flex items-center justify-center text-[#2e7d32] flex-shrink-0">
+                        <i class="fa-regular fa-heart text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-dark mb-1">Compassion</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed">Treat every animal and person with kindness and respect.</p>
+                    </div>
+                </div>
+
+                <!-- Integrity -->
+                <div class="bg-white border border-[#f3e8dd]/60 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-blue-500/15 transition-all duration-300 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-[#e3f2fd] border border-[#bbdefb] flex items-center justify-center text-[#1565c0] flex-shrink-0">
+                        <i class="fa-solid fa-hand-holding-heart text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-dark mb-1">Integrity</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed">We operate transparently and do what's right, always.</p>
+                    </div>
+                </div>
+
+                <!-- Community -->
+                <div class="bg-white border border-[#f3e8dd]/60 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-purple-500/15 transition-all duration-300 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-[#f3e5f5] border border-[#e1bee7] flex items-center justify-center text-[#6a1b9a] flex-shrink-0">
+                        <i class="fa-solid fa-users text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-dark mb-1">Community</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed">Stronger together—building a supportive network.</p>
+                    </div>
+                </div>
+
+                <!-- Impact -->
+                <div class="bg-white border border-[#f3e8dd]/60 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-orange-500/15 transition-all duration-300 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-[#fff3e0] border border-[#ffe0b2] flex items-center justify-center text-[#e65100] flex-shrink-0">
+                        <i class="fa-solid fa-wand-magic-sparkles text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-dark mb-1">Impact</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed">Focused on creating measurable, lasting change.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    const contentWrapper = document.getElementById('about-content-wrapper');
+    if (!contentWrapper) return;
+    
+    let lastScrollTop = 0;
+    let targetTop = 150;
+    let targetLeft = 10;
+    let leftFoot = true;
+
+    function trackScrollFootprints() {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight <= 0) return;
+
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Progress of scroll (0 to 1)
+        const progress = Math.max(0, Math.min(1, scrollTop / docHeight));
+        
+        // Let the footprints path start below hero section and finish before the footer
+        const startY = 300; // px
+        const endY = document.documentElement.scrollHeight - 700; // px
+        
+        targetTop = startY + progress * (endY - startY);
+        
+        // Oscillate left/right 4 times from 8% to 85% width
+        const angle = progress * Math.PI * 8;
+        targetLeft = 8 + 77 * (0.5 + 0.5 * Math.sin(angle));
+        
+        // Direction of movement (derivative of sine is cosine)
+        const cosine = Math.cos(angle);
+        let direction = cosine >= 0 ? 1 : -1;
+
+        // Check if user is scrolling to spawn paw prints
+        if (Math.abs(scrollTop - lastScrollTop) > 4) {
+            spawnPawPrint(targetTop, targetLeft, direction);
+        }
+        
+        lastScrollTop = scrollTop;
+    }
+
+    function spawnPawPrint(topPx, leftPct, direction) {
+        if (Math.random() > 0.28) return; // limit print spawn density
+
+        const paw = document.createElement('i');
+        paw.className = 'fa-solid fa-paw paw-print';
+        
+        // Alternate left/right offset to simulate left & right feet step width
+        const stepWidthOffset = leftFoot ? -8 : 8;
+        leftFoot = !leftFoot;
+        
+        // Base rotation according to direction of travel (plus a slight random jitter)
+        const baseRotation = direction === 1 ? 65 : -65;
+        const jitter = Math.random() * 20 - 10;
+        
+        paw.style.top = `${topPx}px`;
+        paw.style.left = `calc(${leftPct}% + ${stepWidthOffset}px)`;
+        paw.style.transform = `rotate(${baseRotation + jitter}deg)`;
+
+        contentWrapper.appendChild(paw);
+
+        // Auto remove paw print after animation
+        setTimeout(() => {
+            paw.remove();
+        }, 5000);
+    }
+
+    window.addEventListener('scroll', trackScrollFootprints);
+
+    // Initial check
+    trackScrollFootprints();
+});
+</script>
 {% endblock %}
