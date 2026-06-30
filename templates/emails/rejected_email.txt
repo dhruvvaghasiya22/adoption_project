@@ -1,0 +1,14 @@
+Hello {{ user_name }},
+
+Thank you for your interest in adopting {{ pet_name }}.
+
+Unfortunately, the pet owner has decided not to proceed with your adoption request at this time.
+
+Please don't be discouraged. Many wonderful pets are still waiting for a caring home.
+
+We encourage you to continue exploring other pets available on our platform.
+
+Thank you for supporting pet adoption.
+
+Best Regards,
+Pet Adoption Team

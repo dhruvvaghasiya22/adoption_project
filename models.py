@@ -76,3 +76,27 @@ class AdoptionApplication(db.Model):
 
     def __repr__(self):
         return f'<AdoptionApplication User:{self.applicant_id} Pet:{self.pet_id}>'
+
+
+class NotificationLog(db.Model):
+    __tablename__ = 'notification_logs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    application_id = db.Column(db.Integer, db.ForeignKey('adoption_applications.id'), nullable=True)
+    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    notification_type = db.Column(db.String(20), nullable=False)  # email, stream
+    event_type = db.Column(db.String(20), nullable=False)  # accepted, rejected
+    status = db.Column(db.String(20), nullable=False, default='pending')  # sent, failed, pending
+    error_message = db.Column(db.Text, nullable=True)
+    retry_count = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    application = db.relationship('AdoptionApplication', backref='notifications', lazy=True)
+    recipient = db.relationship('User', backref='notifications', lazy=True)
+
+    def __init__(self, **kwargs):
+        super(NotificationLog, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return f'<NotificationLog {self.notification_type} Status:{self.status}>'

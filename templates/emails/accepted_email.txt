@@ -1,0 +1,17 @@
+Hello {{ user_name }},
+
+Great news!
+
+Your adoption request for {{ pet_name }} has been accepted by the pet owner.
+
+You can now contact the owner through the website to discuss the next steps, including pickup, documentation, and any additional requirements.
+
+Pet Details:
+* Pet Name: {{ pet_name }}
+* Breed: {{ breed }}
+* Owner: {{ owner_name }}
+
+Thank you for choosing our Pet Adoption platform and helping provide a loving home.
+
+Best Regards,
+Pet Adoption Team

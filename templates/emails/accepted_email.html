@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Pet Adoption Request Has Been Accepted!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            padding: 40px 20px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .header .logo {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 40px 30px;
+            color: #333333;
+            line-height: 1.6;
+        }
+        .content h2 {
+            color: #27ae60;
+            font-size: 22px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .pet-card {
+            background-color: #f9fbf9;
+            border: 1px solid #e2ece2;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+        }
+        .pet-image-container {
+            margin-right: 20px;
+        }
+        .pet-image {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #2ecc71;
+            background-color: #eaeaea;
+        }
+        .pet-details {
+            flex-grow: 1;
+        }
+        .pet-details ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .pet-details li {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .pet-details strong {
+            color: #2c3e50;
+        }
+        .btn-container {
+            text-align: center;
+            margin: 35px 0 10px;
+        }
+        .btn {
+            background-color: #2ecc71;
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 14px 35px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            display: inline-block;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+        }
+        .btn:hover {
+            background-color: #27ae60;
+        }
+        .footer {
+            background-color: #f8faf9;
+            padding: 25px;
+            text-align: center;
+            font-size: 13px;
+            color: #7f8c8d;
+            border-top: 1px solid #eeeeee;
+        }
+        .footer a {
+            color: #2ecc71;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🐾</div>
+            <h1>Pet Adoption Platform</h1>
+        </div>
+        <div class="content">
+            <h2>Hello {{ user_name }},</h2>
+            <p>Great news!</p>
+            <p>Your adoption request for <strong>{{ pet_name }}</strong> has been accepted by the pet owner.</p>
+            <p>You can now contact the owner through the website to discuss the next steps, including pickup, documentation, and any additional requirements.</p>
+            
+            <div class="pet-card">
+                <div class="pet-image-container">
+                    <img class="pet-image" src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200" alt="{{ pet_name }}">
+                </div>
+                <div class="pet-details">
+                    <ul>
+                        <li><strong>Pet Name:</strong> {{ pet_name }}</li>
+                        <li><strong>Breed:</strong> {{ breed }}</li>
+                        <li><strong>Owner:</strong> {{ owner_name }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p>Thank you for choosing our Pet Adoption platform and helping provide a loving home.</p>
+            
+            <div class="btn-container">
+                <a href="http://127.0.0.1:5000/my-applications" class="btn">View Request</a>
+            </div>
+            
+            <p style="margin-top: 40px; font-size: 14px; color: #7f8c8d;">
+                Best Regards,<br>
+                <strong>Pet Adoption Team</strong>
+            </p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 Pet Adoption Platform. All rights reserved.</p>
+            <p>Need help? Contact our support at <a href="mailto:support@petadopt.com">support@petadopt.com</a></p>
+        </div>
+    </div>
+</body>
+</html>

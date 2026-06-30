@@ -87,7 +87,7 @@ def approve_application(application_id):
         flash('This pet has already been adopted!', 'danger')
         return redirect(request.referrer or url_for('admin.dashboard'))
         
-    application.status = 'approved'
+    application.status = 'accepted'
     pet.is_adopted = True
     
     # Auto-reject other pending applications
@@ -100,7 +100,16 @@ def approve_application(application_id):
         app.status = 'rejected'
         
     db.session.commit()
-    flash(f'Application approved! {pet.name} has been marked as adopted.', 'success')
+    
+    # Trigger notifications
+    from services.notification_service import NotificationService
+    NotificationService.send_adoption_update(application.id, 'accepted')
+    
+    # Also trigger notifications for auto-rejected applications
+    for app in other_apps:
+        NotificationService.send_adoption_update(app.id, 'rejected')
+        
+    flash(f'Application accepted! {pet.name} has been marked as adopted.', 'success')
     return redirect(request.referrer or url_for('admin.dashboard'))
 
 
@@ -116,6 +125,10 @@ def reject_application(application_id):
         
     application.status = 'rejected'
     db.session.commit()
+    
+    # Trigger notifications
+    from services.notification_service import NotificationService
+    NotificationService.send_adoption_update(application.id, 'rejected')
     
     flash(f'Application for {pet.name} was rejected.', 'warning')
     return redirect(request.referrer or url_for('admin.dashboard'))
